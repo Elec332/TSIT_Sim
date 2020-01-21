@@ -1,5 +1,7 @@
 package nl.elec332.nlda.tsit.sim;
 
+import nl.elec332.nlda.tsit.sim.gui.Gui2DRadarPlot;
+import nl.elec332.nlda.tsit.sim.gui.Gui3DView;
 import nl.elec332.nlda.tsit.sim.main.Radar;
 import nl.elec332.nlda.tsit.sim.util.FileHelper;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Elec332 on 21-1-2020.
  */
-public class Simulator {
+public class MultiFileTest {
 
     public static void main(String[] args) throws Exception {
         String[] files = {"missile", "heli", "fighter", "airliner"};
@@ -32,6 +34,8 @@ public class Simulator {
                 .collect(Collectors.toList());
 
         Radar radar = new Radar();
+        radar.addView(Gui3DView::new);
+        radar.addView(Gui2DRadarPlot::new);
         for (RadarMeasurement measurement : measurements) {
             radar.receiveMeasurement(measurement);
             Thread.sleep(100);

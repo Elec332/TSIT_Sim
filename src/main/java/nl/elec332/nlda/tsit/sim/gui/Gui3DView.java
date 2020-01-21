@@ -1,6 +1,7 @@
 package nl.elec332.nlda.tsit.sim.gui;
 
 import com.google.common.collect.Lists;
+import nl.elec332.nlda.tsit.sim.api.radar.IRadarView;
 import nl.elec332.nlda.tsit.sim.simulation.TrackedObject;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.ChartLauncher;
@@ -21,14 +22,13 @@ import java.util.stream.Collectors;
 /**
  * Created by Elec332 on 21-1-2020.
  */
-public class Gui3DView {
+public class Gui3DView implements IRadarView {
 
     public Gui3DView(Supplier<Collection<TrackedObject>> objectTracker) {
         this.chart = new SwingChart(Quality.Intermediate);
         this.height = 10000;
         this.minRange = 50000;
         this.objectTracker = objectTracker;
-
     }
 
     private final Chart chart;
@@ -36,6 +36,7 @@ public class Gui3DView {
     private final Supplier<Collection<TrackedObject>> objectTracker;
     private final Collection<AbstractDrawable> drawers = Lists.newArrayList();
 
+    @Override
     public void show() {
         new Thread(() -> {
             chart.add(new Point(new Coord3d(minRange, minRange, height), Color.WHITE, 0));
@@ -52,7 +53,8 @@ public class Gui3DView {
         drawers.add(drawable);
     }
 
-    public void update() {
+    @Override
+    public void updateTracks() {
         if (chart.getScene() != null) {
             update(true);
         }
