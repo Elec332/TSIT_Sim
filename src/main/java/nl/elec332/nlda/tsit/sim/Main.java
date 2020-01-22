@@ -8,11 +8,13 @@ import nl.elec332.nlda.tsit.sim.simulation.Simulator;
 import nl.elec332.nlda.tsit.sim.util.FileHelper;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
 
+import java.io.IOException;
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-
+        simulator = new Simulator("localhost", 9800);
         Radar radar = new Radar();
 
         radar.addView(Gui3DView::new);

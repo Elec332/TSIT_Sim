@@ -5,7 +5,7 @@ import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
 
 import java.io.IOException;
 
-public class AirWarningRadar extends SimObject{
+public class AirWarningRadar extends SimSystem {
 
     public AirWarningRadar(String host, int port) throws IOException {
         super(host, port, 2);

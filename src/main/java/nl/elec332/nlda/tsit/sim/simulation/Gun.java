@@ -2,7 +2,7 @@ package nl.elec332.nlda.tsit.sim.simulation;
 
 import java.io.IOException;
 
-public class Gun extends SimObject {
+public class Gun extends SimSystem {
 
     public Gun(String host, int port, int system) throws IOException {
         super(host, port, system);
@@ -14,7 +14,7 @@ public class Gun extends SimObject {
 
     public boolean Fire() throws IOException {
         out.println("FIRE");
-        return in.readLine() == "FIRED";
+        return in.readLine().equals("FIRED");
     }
 
 }
