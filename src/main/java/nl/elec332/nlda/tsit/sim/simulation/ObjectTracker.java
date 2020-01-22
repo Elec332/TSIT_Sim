@@ -19,6 +19,7 @@ public class ObjectTracker {
     }
 
     private static final int MAX_ACCELERATION = 100;
+    private static final int MAX_SPEED = 1000;
 
     private final Set<TrackedObject> trackedObjects, trackedObjects_;
 
@@ -32,14 +33,14 @@ public class ObjectTracker {
             return;
         }
         Set<TrackedObject> trackedObjects = this.trackedObjects.stream()
-                .filter(obj -> Math.abs(obj.getSpeedDiff(measurement)) < MAX_ACCELERATION)
-                .filter(obj -> obj.getSpeed(measurement).length() < 1000)
+                .filter(obj -> Math.abs(obj.getSpeedDiff()) < MAX_ACCELERATION)
+                .filter(obj -> obj.getSpeed().length() < MAX_SPEED)
                 .collect(Collectors.toSet());
         if (trackedObjects.isEmpty()) {
             this.trackedObjects.add(new TrackedObject(measurement));
             return;
         }
-        trackedObjects.stream().min((o1, o2) -> Doubles.compare(o1.getSpeedDiff(measurement), o2.getSpeedDiff(measurement))).get().addMeasurement(measurement);
+        trackedObjects.stream().min((o1, o2) -> Doubles.compare(o1.getSpeedDiff(), o2.getSpeedDiff())).get().addMeasurement(measurement);
     }
 
 }
