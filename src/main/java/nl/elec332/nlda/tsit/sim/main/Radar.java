@@ -16,15 +16,14 @@ import java.util.function.Supplier;
  */
 public class Radar {
 
-    public Radar(Vector3d location) {
+    public Radar() {
         this.objectTracker = new ObjectTracker();
         this.views = Lists.newArrayList();
-        this.location = location;
+
     }
 
     private final ObjectTracker objectTracker;
     private final Collection<IRadarView> views;
-    private final Vector3d location;
 
     public void addView(Function<Supplier<Collection<TrackedObject>>, IRadarView> viewerFactory) {
         IRadarView view = viewerFactory.apply(this.objectTracker::getTrackedObjects);
@@ -32,9 +31,6 @@ public class Radar {
         views.add(view);
     }
 
-    public Vector3d getLocation() {
-        return location;
-    }
 
     public void receiveMeasurement(RadarMeasurement measurement) {
         this.objectTracker.receiveMeasurement(measurement);
