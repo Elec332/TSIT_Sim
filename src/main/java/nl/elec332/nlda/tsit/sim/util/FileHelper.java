@@ -1,7 +1,5 @@
 package nl.elec332.nlda.tsit.sim.util;
 
-import com.google.common.collect.Lists;
-
 import java.io.*;
 import java.util.List;
 import java.util.stream.Collectors;
