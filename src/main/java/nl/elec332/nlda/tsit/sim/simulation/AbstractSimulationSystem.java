@@ -6,9 +6,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class SimSystem {
+public class AbstractSimulationSystem {
 
-    public SimSystem(String host, int port, int system) throws IOException {
+    public AbstractSimulationSystem(String host, int port, int system) throws IOException {
 
         Socket pingSocket = new Socket(host, port);
         out = new PrintWriter(pingSocket.getOutputStream(), true);

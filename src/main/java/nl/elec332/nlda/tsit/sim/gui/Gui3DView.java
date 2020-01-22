@@ -2,7 +2,7 @@ package nl.elec332.nlda.tsit.sim.gui;
 
 import com.google.common.collect.Lists;
 import nl.elec332.nlda.tsit.sim.api.radar.IRadarView;
-import nl.elec332.nlda.tsit.sim.simulation.TrackedObject;
+import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.ChartLauncher;
 import org.jzy3d.chart.SwingChart;
@@ -66,7 +66,6 @@ public class Gui3DView implements IRadarView {
 
 
         for (TrackedObject trackedObject : objectTracker.get()) {
-            System.out.println(trackedObject.getLocations());
             List<Coord3d> controlCoords = trackedObject.getLocations().stream().map(pos -> new Coord3d(pos.x, pos.y, pos.z)).collect(Collectors.toList());
             List<Point> controlPoints = new ArrayList<>();
             java.awt.Color realColor = trackedObject.getColor();

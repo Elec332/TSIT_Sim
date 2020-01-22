@@ -2,6 +2,7 @@ package nl.elec332.nlda.tsit.sim;
 
 import nl.elec332.nlda.tsit.sim.gui.Gui2DRadarPlot;
 import nl.elec332.nlda.tsit.sim.gui.Gui3DView;
+import nl.elec332.nlda.tsit.sim.main.Platform;
 import nl.elec332.nlda.tsit.sim.main.Radar;
 import nl.elec332.nlda.tsit.sim.util.FileHelper;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
@@ -33,12 +34,13 @@ public class MultiFileTest {
                 .sorted(Comparator.comparing(RadarMeasurement::getTime))
                 .collect(Collectors.toList());
 
-        Radar radar = new Radar();
+        Platform platform = new Platform();
+        Radar radar = platform.getRadar();
         radar.addView(Gui3DView::new);
         radar.addView(Gui2DRadarPlot::new);
         for (RadarMeasurement measurement : measurements) {
             radar.receiveMeasurement(measurement);
-            Thread.sleep(100);
+            Thread.sleep(50);
         }
     }
 

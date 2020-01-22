@@ -38,6 +38,12 @@ public class Calculator {
         return diff;
     }
 
+    public static double distance(Vector3d posA, Vector3d posB) {
+        double x = posA.x - posB.x;
+        double y = posA.y - posB.y;
+        double z = posA.z - posB.z;
+        return Math.sqrt(x * x + y * y + z * z);
+    }
 
     private static double toRad(double deg) {
         return deg / 180 * Math.PI;

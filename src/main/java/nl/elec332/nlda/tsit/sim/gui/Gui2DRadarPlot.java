@@ -2,7 +2,7 @@ package nl.elec332.nlda.tsit.sim.gui;
 
 import nl.elec332.nlda.tsit.sim.api.radar.IRadarView;
 import nl.elec332.nlda.tsit.sim.gui.swing.J2DRadarComponent;
-import nl.elec332.nlda.tsit.sim.simulation.TrackedObject;
+import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
 
 import javax.swing.*;
 import java.awt.*;

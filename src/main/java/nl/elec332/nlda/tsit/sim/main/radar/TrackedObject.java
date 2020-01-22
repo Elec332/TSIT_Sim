@@ -1,10 +1,11 @@
-package nl.elec332.nlda.tsit.sim.simulation;
+package nl.elec332.nlda.tsit.sim.main.radar;
 
 import com.google.common.collect.Lists;
 import nl.elec332.nlda.tsit.sim.math.Calculator;
 import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
 
+import javax.annotation.Nonnull;
 import javax.vecmath.Vector3d;
 import java.awt.*;
 import java.util.List;
@@ -16,23 +17,35 @@ public class TrackedObject {
 
     public TrackedObject(RadarMeasurement initialMeasurement) {
         this.measurements = Lists.newArrayList(initialMeasurement);
-        this.locations = Lists.newArrayList(Calculator.calculatePosition(initialMeasurement));
+        this.lastPosition = Calculator.calculatePosition(initialMeasurement);
+        this.locations = Lists.newArrayList(this.lastPosition);
         this.speeds = Lists.newArrayList();
         this.lastSpeed = new Vector3d(0, 0, 0);
+        this.id = idTracker++;
+        setObjectClassification(ObjectClassification.UNKNOWN);
     }
 
+    private static  int idTracker = 0;
+
+    private final int id;
     private final List<RadarMeasurement> measurements;
     private final List<Vector3d> locations;
     private final List<Vector3d> speeds;
-    private Vector3d lastSpeed;
+    private Vector3d lastSpeed, lastPosition;
     private ObjectClassification objectType;
+    private Color color;
 
+    @Nonnull
     public ObjectClassification getObjectClassification() {
         return objectType;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public Color getColor() {
-        return Color.GREEN;
+        return color;
     }
 
     public List<Vector3d> getLocations() {
@@ -43,13 +56,19 @@ public class TrackedObject {
         return speeds;
     }
 
+    public Vector3d getCurrentPosition() {
+        return lastPosition;
+    }
+
     public void setObjectClassification(ObjectClassification objectType) {
         this.objectType = objectType;
+        this.color = objectType.getColor();
     }
 
     public void addMeasurement(RadarMeasurement measurement) {
         measurements.add(measurement);
-        locations.add(Calculator.calculatePosition(measurement));
+        this.lastPosition = Calculator.calculatePosition(measurement);
+        locations.add(this.lastPosition);
         lastSpeed = Calculator.calculateSpeed(measurements.get(measurements.size() - 2), measurements.get(measurements.size() - 1));
         this.speeds.add(lastSpeed);
     }
@@ -67,8 +86,8 @@ public class TrackedObject {
         return retSpeed.length();
     }
 
-    public double getDistanceToLast(Vector3d pos) {
-        return Math.sqrt(Calculator.calculatePosition(measurements.get(measurements.size() - 1)).dot(pos));
+    public double getDistanceTo(Vector3d pos) {
+        return Calculator.distance(getCurrentPosition(), pos);
     }
 
 }

@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class TestFiles {
 
     public static void main(String... args) throws IOException {
-        String[] files = {"missile", "heli", "fighter"};//, "airliner"};
+        String[] files = {"missile", "heli", "fighter", "airliner"};
 
         process(Arrays.stream(files).map(name -> {
             try {
