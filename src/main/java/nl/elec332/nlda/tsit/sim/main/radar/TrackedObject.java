@@ -4,10 +4,13 @@ import com.google.common.collect.Lists;
 import nl.elec332.nlda.tsit.sim.math.Calculator;
 import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
+import org.jzy3d.maths.BoundingBox3d;
+import org.jzy3d.maths.Coord3d;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.Vector3d;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,6 +44,20 @@ public class TrackedObject {
     }
 
     public void hit() {objectType = ObjectClassification.DOWN;}
+
+    public BoundingBox3d getBound() {
+        Vector3d posV = getCurrentPosition();
+        Vector3d speedV = getCurrentSpeed();
+        Coord3d posC = new Coord3d(posV.x, posV.y, posV.z);
+        Coord3d speedC = new Coord3d(speedV.x, speedV.y, speedV.z);
+
+        return new BoundingBox3d(Arrays.asList(posC.sub(5), posC.add(speedC.add(5))));
+    }
+
+    public Coord3d getCoord() {
+        return new Coord3d(lastPosition.x, lastPosition.y, lastPosition.z);
+    }
+
 
     public int getId() {
         return id;

@@ -12,12 +12,21 @@ public class SimulatedGun extends AbstractSimulationSystem implements ISimulated
 
     public void aim(int bearing, int elevation) {
         out.println("AIM " + bearing + " " + elevation);
+        String line = null;
+        try {
+            line = in.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(line);
     }
 
     public boolean fire() {
         try {
             out.println("FIRE");
-            return in.readLine().equals("FIRED");
+            String line = in.readLine();
+            System.out.println(line);
+            return line.equals("FIRED");
         } catch (Exception e) {
             return false;
         }

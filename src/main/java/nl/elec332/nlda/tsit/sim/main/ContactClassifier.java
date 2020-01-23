@@ -27,6 +27,10 @@ public class ContactClassifier {
     }
 
     void updateObject(TrackedObject object) {
+        if (Math.round(object.getDistanceTo(Constants.ZERO_POS)) == Constants.PROJECTILE_SPEED) {
+            object.setObjectClassification(ObjectClassification.FRIENDLY);
+            return;
+        }
         Iterator<Vector3d> it = friendlies.iterator();
         while (it.hasNext()) {
             Vector3d friendly = it.next();
@@ -40,6 +44,10 @@ public class ContactClassifier {
     }
 
     private void classify(TrackedObject object) {
+        if (object.getObjectClassification() == ObjectClassification.DOWN || object.getObjectClassification() == ObjectClassification.FRIENDLY){
+            return;
+        }
+        //TODO add boolean not changable
         if (object.getDistanceTo(Constants.ZERO_POS) < Constants.DEFAULT_ENEMY_RANGE) {
             object.setObjectClassification(ObjectClassification.HOSTILE);
         }

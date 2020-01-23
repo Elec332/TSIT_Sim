@@ -9,7 +9,7 @@ import java.util.List;
 public class Simulator {
 
     public Simulator(String host, int port) throws IOException {
-        for (int i = 3; i < 7; i++) {
+        for (int i = 0; i < 4; i++) {
             launchers.add(new SimulatedGun(host, port, i));
         }
         radar = new SimulatedRadar(host, port);

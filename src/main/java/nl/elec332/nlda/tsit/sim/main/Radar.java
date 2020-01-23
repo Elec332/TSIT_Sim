@@ -44,6 +44,8 @@ public class Radar {
         TrackedObject o = this.objectTracker.receiveMeasurement(measurement);
         this.platform.getClassifier().updateObject(o);
         this.platform.getFireController().updateObject(o);
+        System.out.println(o.getId());
+        System.out.println(o.getCurrentPosition());
         updateRadarView();
     }
 

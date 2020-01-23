@@ -5,9 +5,10 @@ import com.google.common.primitives.Doubles;
 import nl.elec332.nlda.tsit.sim.util.Constants;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
 import org.jzy3d.maths.BoundingBox3d;
+import org.jzy3d.maths.Coord3d;
 
-import java.util.Collections;
-import java.util.Set;
+import javax.vecmath.Vector3d;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,20 +50,9 @@ public class ObjectTracker {
                 .min((o1, o2) -> Doubles.compare(o1.getSpeedDiff(measurement), o2.getSpeedDiff(measurement)))
                 .get();
         ret.addMeasurement(measurement);
-        checkHits();
         return ret;
     }
 
-    private void checkHits() {
-        for (TrackedObject object : trackedObjects) {
-            Set<TrackedObject> inRange = trackedObjects.stream()
-                    .filter(obj -> obj.getDistanceTo(object.getCurrentPosition()) - 10 <= object.getCurrentSpeed().length())
-                    .collect(Collectors.toSet());
-            if (!inRange.isEmpty()) {
-                //Make boundingbox arround the object, 10x10 meters and a length of the speed of the object.
-                //THen check if the other object lies within that boundingbox, that means a hit and call object.hit() on both objects
-            }
-        }
-    }
+
 
 }
