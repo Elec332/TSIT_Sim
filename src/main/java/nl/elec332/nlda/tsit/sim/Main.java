@@ -9,14 +9,21 @@ import nl.elec332.nlda.tsit.sim.simulation.Simulator;
 
 import javax.vecmath.Vector3d;
 import java.io.IOException;
+import java.net.ConnectException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)  {
+        Simulator simulator;
+        try {
+            simulator = new Simulator("localhost", 9800);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("IOException, server offline?");
+            return;
+        }
 
-        Simulator simulator = new Simulator("localhost", 9800);
         Platform platform = new Platform();
-
         Radar radar = platform.getRadar();
         radar.addView(Gui3DView::new);
         radar.addView(Gui2DRadarPlot::new);

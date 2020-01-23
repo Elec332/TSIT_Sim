@@ -3,6 +3,7 @@ package nl.elec332.nlda.tsit.sim.simulation;
 import com.google.common.collect.Lists;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.List;
 
 public class Simulator {
