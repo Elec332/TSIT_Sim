@@ -60,6 +60,14 @@ public class TrackedObject {
         return lastPosition;
     }
 
+    public Vector3d getFuturePosition(int seconds) {
+        Vector3d futurePosition = new Vector3d(lastPosition);
+        Vector3d speed = new Vector3d(lastSpeed);
+        speed.scale(seconds);
+        futurePosition.add(speed);
+        return futurePosition;
+    }
+
     public void setObjectClassification(ObjectClassification objectType) {
         this.objectType = objectType;
         this.color = objectType.getColor();
