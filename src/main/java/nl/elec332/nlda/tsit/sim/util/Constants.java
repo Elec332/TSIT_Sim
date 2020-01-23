@@ -10,7 +10,11 @@ public class Constants {
     public static final int ONE_KILOMETER = 1000;
     public static final int DEFAULT_ENEMY_RANGE = 15 * ONE_KILOMETER;
     public static final int KILL_RANGE = 10;
+    public static final int MAX_ACCELERATION = 100;
+    public static final int MAX_SPEED = 1200;
 
     public static final Vector3d ZERO_POS = new Vector3d(0, 0, 0);
+
+
 
 }

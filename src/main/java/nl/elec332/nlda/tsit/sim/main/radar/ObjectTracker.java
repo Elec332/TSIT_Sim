@@ -2,6 +2,7 @@ package nl.elec332.nlda.tsit.sim.main.radar;
 
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Doubles;
+import nl.elec332.nlda.tsit.sim.util.Constants;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
 
 import java.util.Collections;
@@ -18,7 +19,7 @@ public class ObjectTracker {
         this.trackedObjects_ = Collections.unmodifiableSet(trackedObjects);
     }
 
-    private static final int MAX_ACCELERATION = 100;
+
 
     private final Set<TrackedObject> trackedObjects, trackedObjects_;
 
@@ -34,8 +35,8 @@ public class ObjectTracker {
             return ret;
         }
         Set<TrackedObject> trackedObjects = this.trackedObjects.stream()
-                .filter(obj -> Math.abs(obj.getSpeedDiff(measurement)) < MAX_ACCELERATION)
-                .filter(obj -> obj.getSpeed(measurement).length() < 1000)
+                .filter(obj -> Math.abs(obj.getSpeedDiff(measurement)) < Constants.MAX_ACCELERATION)
+                .filter(obj -> obj.getSpeed(measurement).length() < Constants.MAX_SPEED)
                 .collect(Collectors.toSet());
         if (trackedObjects.isEmpty()) {
             ret = new TrackedObject(measurement);
