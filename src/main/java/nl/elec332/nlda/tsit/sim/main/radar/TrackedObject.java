@@ -40,6 +40,8 @@ public class TrackedObject {
         return objectType;
     }
 
+    public void hit() {objectType = ObjectClassification.DOWN;}
+
     public int getId() {
         return id;
     }
@@ -58,6 +60,10 @@ public class TrackedObject {
 
     public Vector3d getCurrentPosition() {
         return lastPosition;
+    }
+
+    public Vector3d getCurrentSpeed() {
+        return lastSpeed;
     }
 
     public Vector3d getFuturePosition(int seconds) {

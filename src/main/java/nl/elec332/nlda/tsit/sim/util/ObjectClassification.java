@@ -12,7 +12,8 @@ public enum ObjectClassification {
     UNKNOWN("Unknown", Color.GRAY),
     NEUTRAL("Neutral", Color.WHITE),
     POSSIBLE_FRIENDLY("Poss. Friendly", Color.YELLOW),
-    FRIENDLY("Friendly", Color.GREEN);
+    FRIENDLY("Friendly", Color.GREEN),
+    DOWN("Down", Color.BLACK);
 
     ObjectClassification(String name, Color color) {
         this.name = name;
