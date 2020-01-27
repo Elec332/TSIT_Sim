@@ -44,10 +44,9 @@ public class ContactClassifier {
     }
 
     private void classify(TrackedObject object) {
-        if (object.getObjectClassification() == ObjectClassification.DOWN || object.getObjectClassification() == ObjectClassification.FRIENDLY){
+        if (!object.getObjectClassification().getChangeable()){
             return;
         }
-        //TODO add boolean not changable
         if (object.getDistanceTo(Constants.ZERO_POS) < Constants.DEFAULT_ENEMY_RANGE) {
             object.setObjectClassification(ObjectClassification.HOSTILE);
         }

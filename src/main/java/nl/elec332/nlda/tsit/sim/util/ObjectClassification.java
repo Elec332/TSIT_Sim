@@ -7,21 +7,23 @@ import java.awt.*;
  */
 public enum ObjectClassification {
 
-    HOSTILE("Hostile", Color.RED),
-    POSSIBLE_HOSTILE("Poss. Hostile", Color.ORANGE),
-    UNKNOWN("Unknown", Color.GRAY),
-    NEUTRAL("Neutral", Color.WHITE),
-    POSSIBLE_FRIENDLY("Poss. Friendly", Color.YELLOW),
-    FRIENDLY("Friendly", Color.GREEN),
-    DOWN("Down", Color.BLACK);
+    HOSTILE("Hostile", Color.RED, true),
+    POSSIBLE_HOSTILE("Poss. Hostile", Color.ORANGE, true),
+    UNKNOWN("Unknown", Color.GRAY, true),
+    NEUTRAL("Neutral", Color.WHITE, true),
+    POSSIBLE_FRIENDLY("Poss. Friendly", Color.YELLOW, true),
+    FRIENDLY("Friendly", Color.GREEN, false),
+    DOWN("Down", Color.BLACK, false);
 
-    ObjectClassification(String name, Color color) {
+    ObjectClassification(String name, Color color, Boolean changeable) {
         this.name = name;
         this.color = color;
+        this.changeable = changeable;
     }
 
     private final String name;
     private final Color color;
+    private final Boolean changeable;
 
     public String getName() {
         return name;
@@ -31,4 +33,7 @@ public enum ObjectClassification {
         return color;
     }
 
+    public Boolean getChangeable() {
+        return changeable;
+    }
 }

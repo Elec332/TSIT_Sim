@@ -36,7 +36,8 @@ public class ObjectTracker {
             trackedObjects.add(ret);
             return ret;
         }
-        //Voeg check toe of er al een snelheid is, want bij eerste measurement is snelheid 0, en als de tweede measurement dan een snelheid van > max_acceleration heeft wordt deze als nieuw object gezien
+        //TODO: Voeg check toe of er al een snelheid is, want bij eerste measurement is snelheid 0, en als de tweede
+        // measurement dan een snelheid van > max_acceleration heeft wordt deze als nieuw object gezien
         Set<TrackedObject> trackedObjects = this.trackedObjects.stream()
                 .filter(obj -> Math.abs(obj.getSpeedDiff(measurement)) < Constants.MAX_ACCELERATION)
                 .filter(obj -> obj.getSpeed(measurement).length() < Constants.MAX_SPEED)

@@ -1,11 +1,13 @@
 package nl.elec332.nlda.tsit.sim.gui.swing;
 
+import nl.elec332.nlda.tsit.sim.main.Radar;
 import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
 import nl.elec332.nlda.tsit.sim.util.Constants;
 
 import javax.swing.*;
 import javax.vecmath.Vector3d;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Supplier;
 
@@ -24,7 +26,7 @@ public class J2DRadarComponent extends JComponent {
 
     private final Supplier<Collection<TrackedObject>> objectTracker;
     private static final int range = 50 * Constants.ONE_KILOMETER;
-    private static final int circle = 6, boxWidth = 60, boxHeight = 50, textHeight = 10;
+    private static final int circle = 6, boxWidth = 80, textHeight = 10;
     private double scaleX, scaleY, offsetX, offsetY;
 
     @Override
@@ -43,6 +45,7 @@ public class J2DRadarComponent extends JComponent {
 
         int radX_ = (int) (Constants.DEFAULT_ENEMY_RANGE * scaleX);
         int radY_ = (int) (Constants.DEFAULT_ENEMY_RANGE * scaleY);
+
         for (int i = 1; i < 5; i++) {
             int radX = radX_ * i;
             int radY = radY_ * i;
@@ -72,13 +75,25 @@ public class J2DRadarComponent extends JComponent {
             pos = oldPos;
         }
         g.fillOval(x - circle / 2, y - circle / 2, circle, circle);
+
+        ArrayList<String> info = new ArrayList<String>();
+        info.add("ID: " + object.getId());
+        info.add(object.getObjectClassification().getName());
+        info.add("ALT:  " + Math.round(object.getCurrentPosition().z * 10)/10 + "m");
+        info.add("SPD:  " + Math.round(object.getCurrentSpeed().length() * 10)/10 + "m/s");
+        info.add("DIST: " + Math.round(object.getCurrentPosition().length() * 10)/10 + "m");
+
+        int boxHeight = textHeight * info.size() + 5;
+
         int xStart = x + circle;
         int yStart = y - circle - boxHeight;
         g.drawRect(xStart, yStart, boxWidth, boxHeight);
         xStart += 2;
         yStart += 2;
-        g.drawString("ID: " + object.getId(), xStart, yStart + textHeight);
-        g.drawString(object.getObjectClassification().getName(), xStart, yStart + textHeight * 2);
+
+        for (int i = 1; i <= info.size(); i++) {
+            g.drawString(info.get(i-1), xStart, yStart + textHeight * i);
+        }
     }
 
     private int getPositionX(double pos) {
