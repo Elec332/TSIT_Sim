@@ -20,22 +20,19 @@ public class ContactClassifier {
     }
 
     private final Platform platform;
-    private final List<Vector3d> friendlies;
+    private final List<Target> friendlies;
 
-    public void notifyFriendly(Vector3d position) {
-        friendlies.add(position);
+    public void notifyFriendly(Target target) {
+        friendlies.add(target);
     }
 
     void updateObject(TrackedObject object) {
-        if (Math.round(object.getDistanceTo(Constants.ZERO_POS)) == Constants.PROJECTILE_SPEED) {
-            object.setObjectClassification(ObjectClassification.FRIENDLY);
-            return;
-        }
-        Iterator<Vector3d> it = friendlies.iterator();
+
+        Iterator<Target> it = friendlies.iterator();
         while (it.hasNext()) {
-            Vector3d friendly = it.next();
-            if (object.getLocations().contains(friendly)) {
-                it.remove();
+            Target friendly = it.next();
+            System.out.println("Distance to target: " + friendly.getTarget().getDistanceTo(friendly.getPos()));
+            if (object.getDistanceTo(friendly.getPos()) < 2) {
                 object.setObjectClassification(ObjectClassification.FRIENDLY);
                 return;
             }

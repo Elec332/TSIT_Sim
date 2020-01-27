@@ -48,7 +48,7 @@ public class FireController {
             Set<TrackedObject> inRange = targets.stream()
                     .filter(obj -> obj != object)
                     .filter(obj -> obj.getObjectClassification() != ObjectClassification.DOWN)
-                    .filter(obj -> obj.getDistanceTo(object.getCurrentPosition()) - 10 <= object.getCurrentSpeed().length())
+                    .filter(obj -> obj.getDistanceTo(object.getCurrentPosition()) - 10 <= object.getCurrentSpeed().length() + obj.getCurrentSpeed().length())
                     .collect(Collectors.toSet());
             if (!inRange.isEmpty()) {
                 for (TrackedObject target : inRange) {
@@ -68,8 +68,8 @@ public class FireController {
                                 object.hit();target.hit();i=300;
                                 System.out.println("And... it's a hit \\o/ ");
                             }
-                            boundTarget.add(deltaCtarget);
-                            boundObject.add(deltaCobject);
+                            boundTarget.shift(deltaCtarget);
+                            boundObject.shift(deltaCobject);
                         }
                     }
                 }
@@ -82,7 +82,7 @@ public class FireController {
         if (object.getCurrentSpeed().length() < 1) {
             return false;
         }
-        int tth = (int)Math.round(object.getCurrentPosition().length()  / object.getCurrentSpeed().length());
+        int tth = Constants.KILL_RANGE;
         Vector3d fut = object.getFuturePosition(tth);
         fut.add(new Vector3d(0,0, Constants.KILL_RANGE * Constants.GRAVITY));
         System.out.println("Target location in " + tth + "s is " + fut);
@@ -95,14 +95,14 @@ public class FireController {
         }
 
         for (int i = 0; i < Constants.NUMBER_OF_GUNS; i++) {
-            if (fire(i, bearing, elevation)) {
+            if (fire(i, bearing, elevation, object)) {
                 break;
             }
         }
         return true;
     }
 
-    private boolean fire(int gun, double bearing, double elevation) {
+    private boolean fire(int gun, double bearing, double elevation, TrackedObject target) {
         System.out.println("Firing at (bearing, elevation): (" + bearing + ", " + elevation + ")");
         bearing = Math.round(bearing);
         elevation = Math.round(elevation);
@@ -112,9 +112,11 @@ public class FireController {
         if (ret) {
             bearing = Math.toRadians(bearing);
             elevation = Math.toRadians(elevation);
-            Vector3d projLoc = new Vector3d(Math.sin(bearing), Math.cos(bearing), Math.sin(elevation));
+            Vector3d projLoc = new Vector3d(Math.sin(bearing) * Math.cos(elevation)
+                    , Math.cos(bearing) * Math.cos(elevation)
+                    , Math.sin(elevation) - Constants.GRAVITY/Constants.PROJECTILE_SPEED);
             projLoc.scale(Constants.PROJECTILE_SPEED);
-            platform.getClassifier().notifyFriendly(projLoc);
+            platform.getClassifier().notifyFriendly(new Target(projLoc, target));
         }
         return ret;
     }
