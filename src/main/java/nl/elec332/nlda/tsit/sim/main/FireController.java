@@ -29,11 +29,7 @@ public class FireController {
     private final List<TrackedObject> targets;
 
     void updateObject(TrackedObject object) {
-        TrackedObject obj = targets.stream().min(Comparator.comparing(o -> object.getDistanceTo(object.getCurrentPosition()))).orElse(null);
-        if (obj != null && obj != object && obj.getDistanceTo(object.getCurrentPosition()) < Constants.KILL_RANGE) {
-            targets.remove(obj);
-            System.out.println("KILL: " + object.getId());
-        }
+
         if (object.getObjectClassification() == ObjectClassification.HOSTILE && !targets.contains(object)) {
             if (object.getLocations().size() <= 3 && object.isUnknown()) {
                 return;
@@ -99,25 +95,23 @@ public class FireController {
         Vector3d fut = object.getFuturePosition(tth);
         double dist, bearing, elevation;
         elevation = fut.z < 0 ? 0 : Math.atan((fut.z + tth * Constants.GRAVITY) / Math.sqrt(fut.x * fut.x + fut.y * fut.y));
-        for (int i = 0; i < 500; i++) {
-            tth = Math.sqrt(fut.x * fut.x + fut.y * fut.y) / (Constants.PROJECTILE_SPEED * Math.cos(elevation / 2));
+        dist = 500;
+        for (int i = 0; i < 50 && dist > Constants.KILL_RANGE; i++) {
+            tth = Calculator.distance(fut, Constants.ZERO_POS) / (Constants.PROJECTILE_SPEED * Math.cos(elevation/2));
             fut = object.getFuturePosition(tth);
             bearing = Math.atan(fut.x / fut.y);
             elevation = fut.z < 0 ? 0 : Math.atan((fut.z + Constants.GRAVITY * tth * tth) / Math.sqrt(fut.x * fut.x + fut.y * fut.y));
-            Vector3d futProj = new Vector3d(Constants.PROJECTILE_SPEED * Math.sin(bearing) * Math.cos(elevation / 2)
-                    , Constants.PROJECTILE_SPEED * Math.cos(bearing) * Math.cos(elevation / 2)
+
+            Vector3d futProj = new Vector3d(Constants.PROJECTILE_SPEED * Math.sin(bearing) * Math.cos(elevation)
+                    , Constants.PROJECTILE_SPEED * Math.cos(bearing) * Math.cos(elevation)
                     , Constants.PROJECTILE_SPEED * Math.sin(elevation) - Constants.GRAVITY * tth);
             futProj.scale(tth);
             dist = Calculator.distance(futProj, fut);
         }
-        return false;
-        //System.out.println("Distance, tth: "+dist+ ","+tth);
-        //if (Calculator.distance(fut, Constants.ZERO_POS) > tth * Constants.PROJECTILE_SPEED) {
-        //return false;
-        //}
-        /*
+
         fut.add(new Vector3d(0,0, tth * Constants.GRAVITY));
         System.out.println("Target location in " + tth + "s is " + fut);
+        System.out.println("Distance at impact will be " + dist + "m");
         bearing = Math.toDegrees(Math.atan(fut.x / fut.y)); //  o / a
         if (fut.y < 0) {
             bearing = 180 + bearing;
@@ -129,7 +123,7 @@ public class FireController {
                 break;
             }
         }
-        return true;*/
+        return true;
     }
 
     private boolean fire(int gun, double bearing, double elevation, TrackedObject target) {
