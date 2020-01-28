@@ -26,15 +26,17 @@ public class Gui3DView implements IRadarView {
 
     public Gui3DView(Supplier<Collection<TrackedObject>> objectTracker) {
         this.chart = new SwingChart(Quality.Intermediate);
-        this.height = 10000;
-        this.minRange = 50000;
+        this.height = 100;
+        this.minRange = 5000;
         this.objectTracker = objectTracker;
     }
 
     private final Chart chart;
-    private final double height, minRange;
+    private final double minRange;
     private final Supplier<Collection<TrackedObject>> objectTracker;
     private final Collection<AbstractDrawable> drawers = Lists.newArrayList();
+
+    private double height;
 
     @Override
     public void show() {
@@ -63,6 +65,8 @@ public class Gui3DView implements IRadarView {
     private synchronized void update(boolean redraw) {
         drawers.forEach(d -> chart.removeDrawable(d, false));
         drawers.clear();
+
+        height = objectTracker.get().stream().mapToDouble(obj -> obj.getCurrentPosition().z).max().orElse(height);
 
 
         for (TrackedObject trackedObject : objectTracker.get()) {

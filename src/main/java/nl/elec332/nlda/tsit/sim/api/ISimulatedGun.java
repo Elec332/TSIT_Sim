@@ -5,7 +5,7 @@ package nl.elec332.nlda.tsit.sim.api;
  */
 public interface ISimulatedGun {
 
-    void aim(int bearing, int elevation);
+    void aim(double bearing, double elevation);
 
     boolean fire();
 

@@ -6,6 +6,7 @@ import nl.elec332.nlda.tsit.sim.main.Launcher;
 import nl.elec332.nlda.tsit.sim.main.Platform;
 import nl.elec332.nlda.tsit.sim.main.Radar;
 import nl.elec332.nlda.tsit.sim.simulation.Simulator;
+import nl.elec332.nlda.tsit.sim.util.Constants;
 
 import javax.vecmath.Vector3d;
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class Main {
         radar.addView(Gui2DRadarPlot::new);
 
         radar.addSimulatedRadar(simulator.radar::getMeasurement);
-        simulator.launchers.forEach(g -> platform.addGun(new Launcher(g, new Vector3d(0, 0, 0))));
+        simulator.launchers.forEach(g -> platform.addGun(new Launcher(g, new Vector3d(0, 0, 0), Constants.PROJECTILE_SPEED)));
     }
 
 }

@@ -10,9 +10,9 @@ public class SimulatedGun extends AbstractSimulationSystem implements ISimulated
         super(host, port, 3 + gun);
     }
 
-    public void aim(int bearing, int elevation) {
+    public void aim(double bearing, double elevation) {
         out.println("AIM " + bearing + " " + elevation);
-        String line = null;
+        String line;
         try {
             line = in.readLine();
         } catch (IOException e) {

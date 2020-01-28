@@ -20,7 +20,7 @@ public class Launcher {
     private final double speed;
     private final Vector3d position;
 
-    public void aim(int bearing, int elevation) {
+    public void aim(double bearing, double elevation) {
         gun.aim(bearing, elevation);
     }
 

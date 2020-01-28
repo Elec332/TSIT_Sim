@@ -2,6 +2,7 @@ package nl.elec332.nlda.tsit.sim.main;
 
 import com.google.common.collect.Lists;
 import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
+import nl.elec332.nlda.tsit.sim.math.Calculator;
 import nl.elec332.nlda.tsit.sim.util.Constants;
 import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
 import org.jzy3d.maths.BoundingBox3d;
@@ -78,23 +79,22 @@ public class FireController {
     }
 
     public boolean fireAt(TrackedObject object) {
-        System.out.println("FIRE@: " + object.getId());
         if (object.getCurrentSpeed().length() < 1) {
             return false;
         }
-        int tth = Constants.KILL_RANGE;
+        System.out.println("FIRE@: " + object.getId());
+        int tth = 5;//Constants.KILL_RANGE;
         Vector3d fut = object.getFuturePosition(tth);
-        fut.add(new Vector3d(0,0, Constants.KILL_RANGE * Constants.GRAVITY));
-        System.out.println("Target location in " + tth + "s is " + fut);
-        double bearing = Math.toDegrees(fut.angle(new Vector3d(0, fut.y, fut.z)));
-        double elevation = Math.toDegrees(fut.angle(new Vector3d(fut.x, fut.y, 0)));
-
-        if (elevation < 0.75) {
-            System.out.println("Target too low for hit (elv: " + elevation + ")");
-            System.out.println(bearing);
-            //System.out.println(fut.angle(new Vector3d(0, fut.y, fut.z)));
+        if (Calculator.distance(fut, Constants.ZERO_POS) > tth * Constants.PROJECTILE_SPEED) {
             return false;
         }
+        fut.add(new Vector3d(0,0, Constants.KILL_RANGE * Constants.GRAVITY));
+        System.out.println("Target location in " + tth + "s is " + fut);
+        double bearing = Math.toDegrees(Math.atan(fut.x / fut.y)); //  o / a
+        if (fut.y < 0) {
+            bearing = 180 + bearing;
+        }
+        double elevation = Math.toDegrees(fut.angle(new Vector3d(fut.x, fut.y, 0)));
 
         for (int i = 0; i < Constants.NUMBER_OF_GUNS; i++) {
             if (fire(i, bearing, elevation, object)) {
@@ -106,18 +106,16 @@ public class FireController {
 
     private boolean fire(int gun, double bearing, double elevation, TrackedObject target) {
         System.out.println("Firing at (bearing, elevation): (" + bearing + ", " + elevation + ")");
-        bearing = Math.round(bearing);
-        elevation = Math.round(elevation);
         Launcher launcher = platform.getGuns().get(gun);
-        launcher.aim((int) bearing, (int) elevation);
+        launcher.aim(bearing, elevation);
         boolean ret = launcher.fire();
         if (ret) {
             bearing = Math.toRadians(bearing);
             elevation = Math.toRadians(elevation);
             Vector3d projLoc = new Vector3d(Math.sin(bearing) * Math.cos(elevation)
                     , Math.cos(bearing) * Math.cos(elevation)
-                    , Math.sin(elevation) - Constants.GRAVITY / Constants.PROJECTILE_SPEED);
-            projLoc.scale(Constants.PROJECTILE_SPEED);
+                    , Math.sin(elevation) - Constants.GRAVITY / launcher.getFiringSpeed());
+            projLoc.scale(launcher.getFiringSpeed());
             platform.getClassifier().notifyFriendly(new Target(projLoc, target));
         }
         return ret;
