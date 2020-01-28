@@ -1,14 +1,17 @@
 package nl.elec332.nlda.tsit.sim.gui.swing;
 
-import nl.elec332.nlda.tsit.sim.main.Radar;
+import com.google.common.collect.Lists;
+import nl.elec332.nlda.tsit.sim.main.Commander;
 import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
 import nl.elec332.nlda.tsit.sim.util.Constants;
 
 import javax.swing.*;
 import javax.vecmath.Vector3d;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -16,12 +19,30 @@ import java.util.function.Supplier;
  */
 public class J2DRadarComponent extends JComponent {
 
-    public J2DRadarComponent(Supplier<Collection<TrackedObject>> objectTracker) {
+    public J2DRadarComponent(Supplier<Collection<TrackedObject>> objectTracker, Commander commander) {
         this.objectTracker = objectTracker;
         setMinimumSize(new Dimension(600, 600));
         setMaximumSize(new Dimension(600, 600));
         setSize(new Dimension(600, 600));
         setBackground(Color.BLACK);
+        addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3) {//Right mouse
+                    for (TrackedObject object : objectTracker.get()) {
+                        Vector3d pos = object.getCurrentPosition();
+                        int x = getPositionX(pos.x);
+                        int y = getPositionY(pos.y);
+                        if (new Rectangle(x, y - 2 * textHeight, boxWidth, 2 * textHeight).contains(e.getPoint())) {
+                            commander.editProperties(object);
+                            return;
+                        }
+                    }
+                }
+            }
+
+        });
     }
 
     private final Supplier<Collection<TrackedObject>> objectTracker;
@@ -76,7 +97,7 @@ public class J2DRadarComponent extends JComponent {
         }
         g.fillOval(x - circle / 2, y - circle / 2, circle, circle);
 
-        ArrayList<String> info = new ArrayList<String>();
+        List<String> info = Lists.newArrayList();
         info.add("ID: " + object.getId());
 
         int boxHeight = textHeight * info.size() + 5;
@@ -88,7 +109,7 @@ public class J2DRadarComponent extends JComponent {
         yStart += 2;
 
         for (int i = 1; i <= info.size(); i++) {
-            g.drawString(info.get(i-1), xStart, yStart + textHeight * i);
+            g.drawString(info.get(i - 1), xStart, yStart + textHeight * i);
         }
     }
 

@@ -11,17 +11,25 @@ import java.util.List;
 public class Platform {
 
     public Platform() {
+        this.guns = Lists.newArrayList();
+        this.guns_ = Collections.unmodifiableList(this.guns);
+
+        this.commander = new Commander(this);
         this.classifier = new ContactClassifier(this);
         this.radar = new Radar(this);
         this.fireController = new FireController(this);
-        this.guns = Lists.newArrayList();
-        this.guns_ = Collections.unmodifiableList(this.guns);
     }
 
+    private final Commander commander;
     private final Radar radar;
     private final ContactClassifier classifier;
     private final FireController fireController;
     private final List<Launcher> guns, guns_;
+
+
+    public Commander getCommander() {
+        return commander;
+    }
 
     public Radar getRadar() {
         return radar;

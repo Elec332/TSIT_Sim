@@ -1,6 +1,8 @@
 package nl.elec332.nlda.tsit.sim.util;
 
 import javax.vecmath.Vector3d;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
  * Created by Elec332 on 22-1-2020
@@ -20,6 +22,6 @@ public class Constants {
 
     public static final Vector3d ZERO_POS = new Vector3d(0, 0, 0);
 
-
+    public static final NumberFormat TWO_DIGITS_FORMAT = new DecimalFormat("#.##");
 
 }

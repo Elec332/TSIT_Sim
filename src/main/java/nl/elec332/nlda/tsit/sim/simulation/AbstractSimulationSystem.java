@@ -15,7 +15,7 @@ public class AbstractSimulationSystem {
         in = new BufferedReader(new InputStreamReader(pingSocket.getInputStream()));
 
         out.println("SYSTEM Base " + system);
-        System.out.println("Starting object " + system + " : "+ in.readLine() + " " + in.readLine());
+        System.out.println("Starting object " + system + " : " + in.readLine() + " " + in.readLine());
     }
 
     protected PrintWriter out;

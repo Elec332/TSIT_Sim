@@ -3,6 +3,7 @@ package nl.elec332.nlda.tsit.sim.gui;
 import nl.elec332.nlda.tsit.sim.api.radar.IRadarView;
 import nl.elec332.nlda.tsit.sim.gui.swing.J2DContactList;
 import nl.elec332.nlda.tsit.sim.gui.swing.J2DRadarComponent;
+import nl.elec332.nlda.tsit.sim.main.Commander;
 import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
 
 import javax.swing.*;
@@ -15,8 +16,8 @@ import java.util.function.Supplier;
  */
 public class Gui2DRadarPlot implements IRadarView {
 
-    public Gui2DRadarPlot(Supplier<Collection<TrackedObject>> objectTracker) {
-        this.radarComponent = new J2DRadarComponent(objectTracker);
+    public Gui2DRadarPlot(Supplier<Collection<TrackedObject>> objectTracker, Commander commander) {
+        this.radarComponent = new J2DRadarComponent(objectTracker, commander);
         this.contactList = new J2DContactList(objectTracker);
         contactList.setLocation(800, 0);
     }
@@ -30,7 +31,7 @@ public class Gui2DRadarPlot implements IRadarView {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.add(radarComponent);
         frame.add(contactList);
-        frame.setLayout(new GridLayout(1,2));
+        frame.setLayout(new GridLayout(1, 2));
         frame.setSize(1200, 600);
         frame.setVisible(true);
     }

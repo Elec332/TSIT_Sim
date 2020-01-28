@@ -1,8 +1,11 @@
 package nl.elec332.nlda.tsit.sim.main.radar;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import nl.elec332.nlda.tsit.sim.math.Calculator;
 import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
+import nl.elec332.nlda.tsit.sim.util.ObjectType;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
 import org.jzy3d.maths.BoundingBox3d;
 import org.jzy3d.maths.Coord3d;
@@ -12,6 +15,7 @@ import javax.vecmath.Vector3d;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Elec332 on 15-1-2020.
@@ -26,9 +30,12 @@ public class TrackedObject {
         this.lastSpeed = new Vector3d(0, 0, 0);
         this.id = idTracker++;
         setObjectClassification(ObjectClassification.UNKNOWN);
+        this.types = Lists.newArrayList(ObjectType.UNKNOWN);
+        this.typeLocked = false;
+        this.fireClearance = null;
     }
 
-    private static  int idTracker = 0;
+    private static int idTracker = 0;
 
     private final int id;
     private final List<RadarMeasurement> measurements;
@@ -36,6 +43,9 @@ public class TrackedObject {
     private final List<Vector3d> speeds;
     private Vector3d lastSpeed, lastPosition;
     private ObjectClassification objectType;
+    private List<ObjectType> types;
+    private boolean typeLocked;
+    private Boolean fireClearance;
     private Color color;
 
     @Nonnull
@@ -43,7 +53,9 @@ public class TrackedObject {
         return objectType;
     }
 
-    public void hit() {objectType = ObjectClassification.DOWN;}
+    public boolean isUnknown() {
+        return types.size() == 1 && types.get(0) == ObjectType.UNKNOWN;
+    }
 
     public BoundingBox3d getBound() {
         Vector3d posV = getCurrentPosition();
@@ -58,6 +70,54 @@ public class TrackedObject {
         return new Coord3d(lastPosition.x, lastPosition.y, lastPosition.z);
     }
 
+    public List<ObjectType> getTypes() {
+        return types;
+    }
+
+    public void setFireClearance(Boolean fireClearance) {
+        this.fireClearance = fireClearance;
+    }
+
+    public Boolean hasFireClearance() {
+        return fireClearance;
+    }
+
+    public String getObjectTypeString() {
+        StringBuilder type = new StringBuilder();
+        if (types.size() > 1) {
+            type.append("Possibly ");
+            type.append(types.get(0));
+            for (int i = 1; i < types.size(); i++) {
+                type.append("/");
+                type.append(types.get(i));
+            }
+        } else {
+            if (types.size() == 0) {
+                type.append(ObjectType.UNKNOWN);
+            } else {
+                type.append(types.get(0));
+            }
+        }
+        return type.toString();
+    }
+
+    public void setObjectType(ObjectType type) {
+        setObjectType(Sets.newHashSet(type));
+    }
+
+    public void setObjectType(Set<ObjectType> types) {
+        if (typeLocked) {
+            return;
+        }
+        if (types.size() > 1) {
+            types.remove(ObjectType.UNKNOWN);
+        }
+        this.types = ImmutableList.copyOf(types);
+    }
+
+    public void lockType() {
+        this.typeLocked = true;
+    }
 
     public int getId() {
         return id;

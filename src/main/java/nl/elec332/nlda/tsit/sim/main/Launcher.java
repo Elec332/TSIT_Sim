@@ -1,7 +1,6 @@
 package nl.elec332.nlda.tsit.sim.main;
 
 import nl.elec332.nlda.tsit.sim.api.ISimulatedGun;
-import nl.elec332.nlda.tsit.sim.util.Constants;
 
 import javax.vecmath.Vector3d;
 
@@ -24,7 +23,7 @@ public class Launcher {
         gun.aim(bearing, elevation);
     }
 
-    public boolean fire()  {
+    public boolean fire() {
         return gun.fire();
     }
 

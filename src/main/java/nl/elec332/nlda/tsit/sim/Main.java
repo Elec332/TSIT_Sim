@@ -10,11 +10,10 @@ import nl.elec332.nlda.tsit.sim.util.Constants;
 
 import javax.vecmath.Vector3d;
 import java.io.IOException;
-import java.net.ConnectException;
 
 public class Main {
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
         Simulator simulator;
         try {
             simulator = new Simulator("localhost", 9800);
@@ -24,7 +23,7 @@ public class Main {
 
         Platform platform = new Platform();
         Radar radar = platform.getRadar();
-        radar.addView(Gui3DView::new);
+        radar.addView((obj, com) -> new Gui3DView(obj));
         radar.addView(Gui2DRadarPlot::new);
 
         radar.addSimulatedRadar(simulator.radar::getMeasurement);

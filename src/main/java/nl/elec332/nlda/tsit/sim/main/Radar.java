@@ -7,7 +7,7 @@ import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
 
 import java.util.Collection;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 /**
@@ -25,8 +25,12 @@ public class Radar {
     private final ObjectTracker objectTracker;
     private final Collection<IRadarView> views;
 
-    public void addView(Function<Supplier<Collection<TrackedObject>>, IRadarView> viewerFactory) {
-        IRadarView view = viewerFactory.apply(this.objectTracker::getFilteredObjects);
+    public void notifyCrashed(TrackedObject object) {
+        objectTracker.notifyCrashed(object);
+    }
+
+    public void addView(BiFunction<Supplier<Collection<TrackedObject>>, Commander, IRadarView> viewerFactory) {
+        IRadarView view = viewerFactory.apply(this.objectTracker::getFilteredObjects, this.platform.getCommander());
         view.show();
         views.add(view);
     }

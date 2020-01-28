@@ -8,7 +8,9 @@ import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
 
 import javax.vecmath.Vector3d;
-import java.util.*;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -33,8 +35,9 @@ public class ObjectTracker {
         return trackedObjects_;
     }
 
-    public void notifyCrashed(int id) {
-        this.hidden.add(id);
+    public void notifyCrashed(TrackedObject object) {
+        this.hidden.add(object.getId());
+        object.setObjectClassification(ObjectClassification.DOWN);
     }
 
     public TrackedObject receiveMeasurement(final RadarMeasurement measurement) {
@@ -75,7 +78,6 @@ public class ObjectTracker {
         ret.addMeasurement(measurement);
         return ret;
     }
-
 
 
 }

@@ -36,7 +36,7 @@ public class MultiFileTest {
 
         Platform platform = new Platform();
         Radar radar = platform.getRadar();
-        radar.addView(Gui3DView::new);
+        radar.addView((obj, com) -> new Gui3DView(obj));
         radar.addView(Gui2DRadarPlot::new);
         for (RadarMeasurement measurement : measurements) {
             radar.receiveMeasurement(measurement);

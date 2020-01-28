@@ -4,21 +4,20 @@ import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
 import nl.elec332.nlda.tsit.sim.util.Constants;
 
 import javax.swing.*;
-import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-public class J2DContactList extends JList {
+public class J2DContactList extends JList<String> {
 
     public J2DContactList(Supplier<Collection<TrackedObject>> objectTracker) {
         super();
         this.objectTracker = objectTracker;
+        this.list = new DefaultListModel<>();
     }
 
     private final Supplier<Collection<TrackedObject>> objectTracker;
-    private DefaultListModel list = new DefaultListModel();
+    private final DefaultListModel<String> list;
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -27,15 +26,17 @@ public class J2DContactList extends JList {
             String info = "<html>";
             info += ("ID: " + object.getId());
             info += ("<br />" + object.getObjectClassification().getName());
-            info += ("<br />ALT:  " + Math.round(object.getCurrentPosition().z * 10)/10 + "m");
-            info += ("<br />SPD:  " + Math.round(object.getCurrentSpeed().length() * 10)/10 + "m/s");
-            info += ("<br />DIST: " + Math.round(object.getCurrentPosition().length() * 10)/10 + "m");
+
+            info += ("<br />TYPE: " + object.getObjectTypeString());
+            info += ("<br />ALT:  " + Constants.TWO_DIGITS_FORMAT.format(object.getCurrentPosition().z) + "m");
+            info += ("<br />SPD:  " + Constants.TWO_DIGITS_FORMAT.format(object.getCurrentSpeed().length()) + "m/s");
+            info += ("<br />DIST: " + Constants.TWO_DIGITS_FORMAT.format(object.getCurrentPosition().length()) + "m");
             info += "</html>";
 
             list.addElement(info);
         }
         super.setModel(list);
-
         super.paintComponent(g);
     }
+
 }

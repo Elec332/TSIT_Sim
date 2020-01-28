@@ -35,10 +35,20 @@ public class FireController {
             System.out.println("KILL: " + object.getId());
         }
         if (object.getObjectClassification() == ObjectClassification.HOSTILE && !targets.contains(object)) {
-            System.out.println(object);
-            System.out.println(object.getCurrentPosition());
-            if (fireAt(object)) {
-                targets.add(object);
+            if (object.getLocations().size() <= 3 && object.isUnknown()) {
+                return;
+            }
+            Boolean clearance = object.hasFireClearance();
+            if (clearance == null) {
+                this.platform.getCommander().requestClearance(object);
+                return;
+            }
+            if (clearance) {
+                System.out.println(object);
+                System.out.println(object.getCurrentPosition());
+                if (fireAt(object)) {
+                    targets.add(object);
+                }
             }
         }
         checkHits();
@@ -54,7 +64,7 @@ public class FireController {
             if (!inRange.isEmpty()) {
                 for (TrackedObject target : inRange) {
                     System.out.println("object " + object.getId() + " and " + target.getId() + " are within 10m of each other ");
-                    if (object.getBound().intersect(target.getBound())){
+                    if (object.getBound().intersect(target.getBound())) {
                         System.out.println("And boundingboxes intersect");
                         Vector3d deltaVobject = object.getCurrentSpeed();
                         Coord3d deltaCobject = new Coord3d(deltaVobject.x, deltaVobject.y, deltaVobject.z).div(Constants.HIT_SLICING);
@@ -65,8 +75,10 @@ public class FireController {
                         BoundingBox3d boundTarget = new BoundingBox3d(Arrays.asList(target.getCoord().sub(5), target.getCoord().add(5)));
                         BoundingBox3d boundObject = new BoundingBox3d(Arrays.asList(object.getCoord().sub(5), object.getCoord().add(5)));
                         for (int i = 0; i < 300; i++) {
-                            if (boundTarget.intersect(boundObject)){
-                                object.hit();target.hit();i=300;
+                            if (boundTarget.intersect(boundObject)) {
+                                this.platform.getRadar().notifyCrashed(object);
+                                this.platform.getRadar().notifyCrashed(target);
+                                i = 300;
                                 System.out.println("And... it's a hit \\o/ ");
                             }
                             boundTarget.shift(deltaCtarget);
@@ -83,25 +95,25 @@ public class FireController {
             return false;
         }
         System.out.println("FIRE@: " + object.getId());
-        double tth = object.getDistanceTo(Constants.ZERO_POS)/Constants.PROJECTILE_SPEED;
+        double tth = object.getDistanceTo(Constants.ZERO_POS) / Constants.PROJECTILE_SPEED;
         Vector3d fut = object.getFuturePosition(tth);
-        double dist, bearing, elevation = 0;
+        double dist, bearing, elevation;
         elevation = fut.z < 0 ? 0 : Math.atan((fut.z + tth * Constants.GRAVITY) / Math.sqrt(fut.x * fut.x + fut.y * fut.y));
-        for (int i = 0; i <500; i++) {
-            tth = Math.sqrt(fut.x * fut.x + fut.y * fut.y) / (Constants.PROJECTILE_SPEED * Math.cos(elevation/2));
+        for (int i = 0; i < 500; i++) {
+            tth = Math.sqrt(fut.x * fut.x + fut.y * fut.y) / (Constants.PROJECTILE_SPEED * Math.cos(elevation / 2));
             fut = object.getFuturePosition(tth);
             bearing = Math.atan(fut.x / fut.y);
-            elevation = fut.z < 0 ? 0 : Math.atan((fut.z + Constants.GRAVITY*tth*tth) / Math.sqrt(fut.x * fut.x + fut.y * fut.y));
-            Vector3d futProj = new Vector3d(Constants.PROJECTILE_SPEED * Math.sin(bearing) * Math.cos(elevation/2)
-                    , Constants.PROJECTILE_SPEED * Math.cos(bearing) * Math.cos(elevation/2)
-                    , Constants.PROJECTILE_SPEED * Math.sin(elevation) - Constants.GRAVITY*tth);
+            elevation = fut.z < 0 ? 0 : Math.atan((fut.z + Constants.GRAVITY * tth * tth) / Math.sqrt(fut.x * fut.x + fut.y * fut.y));
+            Vector3d futProj = new Vector3d(Constants.PROJECTILE_SPEED * Math.sin(bearing) * Math.cos(elevation / 2)
+                    , Constants.PROJECTILE_SPEED * Math.cos(bearing) * Math.cos(elevation / 2)
+                    , Constants.PROJECTILE_SPEED * Math.sin(elevation) - Constants.GRAVITY * tth);
             futProj.scale(tth);
             dist = Calculator.distance(futProj, fut);
         }
         return false;
         //System.out.println("Distance, tth: "+dist+ ","+tth);
         //if (Calculator.distance(fut, Constants.ZERO_POS) > tth * Constants.PROJECTILE_SPEED) {
-            //return false;
+        //return false;
         //}
         /*
         fut.add(new Vector3d(0,0, tth * Constants.GRAVITY));

@@ -4,10 +4,13 @@ import com.google.common.collect.Lists;
 import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
 import nl.elec332.nlda.tsit.sim.util.Constants;
 import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
+import nl.elec332.nlda.tsit.sim.util.ObjectType;
 
-import javax.vecmath.Vector3d;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Elec332 on 22-1-2020
@@ -40,6 +43,8 @@ public class ContactClassifier {
             if (!friendly.hasMissile() && object.getDistanceTo(friendly.getPos()) < 2) {
                 object.setObjectClassification(ObjectClassification.FRIENDLY);
                 friendly.setMissile(object);
+                object.setObjectType(ObjectType.MISSILE);
+                object.lockType();
                 return;
             }
         }
@@ -47,7 +52,12 @@ public class ContactClassifier {
     }
 
     private void classify(TrackedObject object) {
-        if (!object.getObjectClassification().getChangeable()){
+        Set<ObjectType> types = Arrays.stream(ObjectType.values()).filter(type -> {
+            Boolean b = type.isPossibleTarget(object);
+            return b != null && b;
+        }).collect(Collectors.toSet());
+        object.setObjectType(types);
+        if (!object.getObjectClassification().getChangeable()) {
             return;
         }
         if (object.getDistanceTo(Constants.ZERO_POS) < Constants.DEFAULT_ENEMY_RANGE) {
