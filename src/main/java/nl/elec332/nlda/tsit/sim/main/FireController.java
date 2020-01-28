@@ -83,18 +83,18 @@ public class FireController {
             return false;
         }
         System.out.println("FIRE@: " + object.getId());
-        int tth = 5;//Constants.KILL_RANGE;
+        int tth = Constants.KILL_RANGE;
         Vector3d fut = object.getFuturePosition(tth);
         if (Calculator.distance(fut, Constants.ZERO_POS) > tth * Constants.PROJECTILE_SPEED) {
             return false;
         }
-        fut.add(new Vector3d(0,0, Constants.KILL_RANGE * Constants.GRAVITY));
+        fut.add(new Vector3d(0,0, tth * Constants.GRAVITY));
         System.out.println("Target location in " + tth + "s is " + fut);
         double bearing = Math.toDegrees(Math.atan(fut.x / fut.y)); //  o / a
         if (fut.y < 0) {
             bearing = 180 + bearing;
         }
-        double elevation = Math.toDegrees(fut.angle(new Vector3d(fut.x, fut.y, 0)));
+        double elevation = fut.z < 0 ? 0 : Math.toDegrees(Math.atan(fut.z / Math.sqrt(fut.x * fut.x + fut.y * fut.y)));
 
         for (int i = 0; i < Constants.NUMBER_OF_GUNS; i++) {
             if (fire(i, bearing, elevation, object)) {

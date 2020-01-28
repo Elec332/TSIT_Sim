@@ -60,6 +60,7 @@ public class ObjectTracker {
         }
 
         Set<TrackedObject> trackedObjects = this.trackedObjects.stream()
+                .filter(object -> object.getObjectClassification() != ObjectClassification.DOWN)
                 .filter(obj -> Math.abs(obj.getSpeedDiff(measurement)) < Constants.MAX_ACCELERATION)
                 .filter(obj -> obj.getSpeed(measurement).length() < Constants.MAX_SPEED)
                 .collect(Collectors.toSet());
