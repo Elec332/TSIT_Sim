@@ -26,7 +26,7 @@ public class J2DRadarComponent extends JComponent {
 
     private final Supplier<Collection<TrackedObject>> objectTracker;
     private static final int range = 50 * Constants.ONE_KILOMETER;
-    private static final int circle = 6, boxWidth = 80, textHeight = 10;
+    private static final int circle = 6, boxWidth = 40, textHeight = 10;
     private double scaleX, scaleY, offsetX, offsetY;
 
     @Override
@@ -78,10 +78,6 @@ public class J2DRadarComponent extends JComponent {
 
         ArrayList<String> info = new ArrayList<String>();
         info.add("ID: " + object.getId());
-        info.add(object.getObjectClassification().getName());
-        info.add("ALT:  " + Math.round(object.getCurrentPosition().z * 10)/10 + "m");
-        info.add("SPD:  " + Math.round(object.getCurrentSpeed().length() * 10)/10 + "m/s");
-        info.add("DIST: " + Math.round(object.getCurrentPosition().length() * 10)/10 + "m");
 
         int boxHeight = textHeight * info.size() + 5;
 
