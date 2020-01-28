@@ -84,8 +84,8 @@ public class TrackedObject {
     }
 
     public Vector3d getFuturePosition(int seconds) {
-        Vector3d futurePosition = new Vector3d(lastPosition);
-        Vector3d speed = new Vector3d(lastSpeed);
+        Vector3d futurePosition = new Vector3d(getCurrentPosition());
+        Vector3d speed = new Vector3d(getCurrentSpeed());
         speed.scale(seconds);
         futurePosition.add(speed);
         return futurePosition;

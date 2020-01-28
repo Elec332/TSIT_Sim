@@ -18,9 +18,7 @@ public class Main {
         try {
             simulator = new Simulator("localhost", 9800);
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("IOException, server offline?");
-            return;
+            throw new RuntimeException("Failed to connect to server...", e);
         }
 
         Platform platform = new Platform();

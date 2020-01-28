@@ -89,8 +89,10 @@ public class FireController {
         double bearing = Math.toDegrees(fut.angle(new Vector3d(0, fut.y, fut.z)));
         double elevation = Math.toDegrees(fut.angle(new Vector3d(fut.x, fut.y, 0)));
 
-        if (elevation < 0.7) {
+        if (elevation < 0.75) {
             System.out.println("Target too low for hit (elv: " + elevation + ")");
+            System.out.println(bearing);
+            //System.out.println(fut.angle(new Vector3d(0, fut.y, fut.z)));
             return false;
         }
 
@@ -114,7 +116,7 @@ public class FireController {
             elevation = Math.toRadians(elevation);
             Vector3d projLoc = new Vector3d(Math.sin(bearing) * Math.cos(elevation)
                     , Math.cos(bearing) * Math.cos(elevation)
-                    , Math.sin(elevation) - Constants.GRAVITY/Constants.PROJECTILE_SPEED);
+                    , Math.sin(elevation) - Constants.GRAVITY / Constants.PROJECTILE_SPEED);
             projLoc.scale(Constants.PROJECTILE_SPEED);
             platform.getClassifier().notifyFriendly(new Target(projLoc, target));
         }

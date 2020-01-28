@@ -1,6 +1,7 @@
 package nl.elec332.nlda.tsit.sim.main;
 
 import nl.elec332.nlda.tsit.sim.api.ISimulatedGun;
+import nl.elec332.nlda.tsit.sim.util.Constants;
 
 import javax.vecmath.Vector3d;
 
@@ -9,10 +10,10 @@ import javax.vecmath.Vector3d;
  */
 public class Launcher {
 
-    public Launcher(ISimulatedGun gun, Vector3d position) {
+    public Launcher(ISimulatedGun gun, Vector3d position, double speed) {
         this.gun = gun;
         this.position = position;
-        this.speed = 0; //todo
+        this.speed = speed;
     }
 
     private final ISimulatedGun gun;

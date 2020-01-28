@@ -2,10 +2,10 @@ package nl.elec332.nlda.tsit.sim.main.radar;
 
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Doubles;
+import nl.elec332.nlda.tsit.sim.math.Calculator;
 import nl.elec332.nlda.tsit.sim.util.Constants;
+import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
-import org.jzy3d.maths.BoundingBox3d;
-import org.jzy3d.maths.Coord3d;
 
 import javax.vecmath.Vector3d;
 import java.util.*;
@@ -19,14 +19,22 @@ public class ObjectTracker {
     public ObjectTracker() {
         this.trackedObjects = Sets.newHashSet();
         this.trackedObjects_ = Collections.unmodifiableSet(trackedObjects);
+        this.hidden = Sets.newHashSet();
     }
 
-
-
     private final Set<TrackedObject> trackedObjects, trackedObjects_;
+    private final Set<Integer> hidden;
+
+    public Set<TrackedObject> getFilteredObjects() {
+        return getTrackedObjects().stream().filter(obj -> !hidden.contains(obj.getId())).collect(Collectors.toSet());
+    }
 
     public Set<TrackedObject> getTrackedObjects() {
         return trackedObjects_;
+    }
+
+    public void notifyCrashed(int id) {
+        this.hidden.add(id);
     }
 
     public TrackedObject receiveMeasurement(final RadarMeasurement measurement) {
@@ -36,8 +44,21 @@ public class ObjectTracker {
             trackedObjects.add(ret);
             return ret;
         }
-        //TODO: Voeg check toe of er al een snelheid is, want bij eerste measurement is snelheid 0, en als de tweede
-        // measurement dan een snelheid van > max_acceleration heeft wordt deze als nieuw object gezien
+
+        Vector3d pos = Calculator.calculatePosition(measurement);
+        Optional<TrackedObject> killed = this.trackedObjects.stream().filter(obj -> obj.getCurrentPosition().equals(pos)).findFirst();
+        if (killed.isPresent()) {
+            TrackedObject obj = killed.get();
+            if (obj.getLocations().size() > 2) {
+                if (!hidden.contains(obj.getId())) {
+                    obj.addMeasurement(measurement);
+                    obj.setObjectClassification(ObjectClassification.DOWN);
+                    hidden.add(obj.getId());
+                }
+                return obj;
+            }
+        }
+
         Set<TrackedObject> trackedObjects = this.trackedObjects.stream()
                 .filter(obj -> Math.abs(obj.getSpeedDiff(measurement)) < Constants.MAX_ACCELERATION)
                 .filter(obj -> obj.getSpeed(measurement).length() < Constants.MAX_SPEED)

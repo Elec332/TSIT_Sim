@@ -6,19 +6,35 @@ import javax.vecmath.Vector3d;
 
 public class Target {
 
-    private static Vector3d pos;
-    private static TrackedObject target;
-
     public Target(Vector3d pos, TrackedObject target) {
         this.pos = pos;
         this.target = target;
     }
 
+    private Vector3d pos;
+    private TrackedObject target, missile;
+
     public Vector3d getPos() {
+        if (missile != null) {
+            return missile.getCurrentPosition();
+        }
         return pos;
+    }
+
+    public boolean hasMissile() {
+        return missile != null;
     }
 
     public TrackedObject getTarget() {
         return target;
     }
+
+    public void setMissile(TrackedObject missile) {
+        this.missile = missile;
+    }
+
+    public TrackedObject getMissile() {
+        return missile;
+    }
+
 }

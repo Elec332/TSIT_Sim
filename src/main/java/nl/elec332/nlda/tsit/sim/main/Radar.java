@@ -26,7 +26,7 @@ public class Radar {
     private final Collection<IRadarView> views;
 
     public void addView(Function<Supplier<Collection<TrackedObject>>, IRadarView> viewerFactory) {
-        IRadarView view = viewerFactory.apply(this.objectTracker::getTrackedObjects);
+        IRadarView view = viewerFactory.apply(this.objectTracker::getFilteredObjects);
         view.show();
         views.add(view);
     }

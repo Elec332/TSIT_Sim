@@ -15,7 +15,7 @@ public enum ObjectClassification {
     FRIENDLY("Friendly", Color.GREEN, false),
     DOWN("Down", Color.BLACK, false);
 
-    ObjectClassification(String name, Color color, Boolean changeable) {
+    ObjectClassification(String name, Color color, boolean changeable) {
         this.name = name;
         this.color = color;
         this.changeable = changeable;
@@ -23,7 +23,7 @@ public enum ObjectClassification {
 
     private final String name;
     private final Color color;
-    private final Boolean changeable;
+    private final boolean changeable;
 
     public String getName() {
         return name;
@@ -33,7 +33,7 @@ public enum ObjectClassification {
         return color;
     }
 
-    public Boolean getChangeable() {
+    public boolean getChangeable() {
         return changeable;
     }
 }

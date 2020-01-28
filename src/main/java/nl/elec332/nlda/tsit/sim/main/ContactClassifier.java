@@ -27,13 +27,19 @@ public class ContactClassifier {
     }
 
     void updateObject(TrackedObject object) {
-
         Iterator<Target> it = friendlies.iterator();
         while (it.hasNext()) {
             Target friendly = it.next();
+            if (friendly.getTarget().getObjectClassification() == ObjectClassification.DOWN) {
+                it.remove();
+            }
+            if (friendly.hasMissile() && friendly.getMissile().getObjectClassification() == ObjectClassification.DOWN) {
+                it.remove();
+            }
             System.out.println("Distance to target: " + friendly.getTarget().getDistanceTo(friendly.getPos()));
-            if (object.getDistanceTo(friendly.getPos()) < 2) {
+            if (!friendly.hasMissile() && object.getDistanceTo(friendly.getPos()) < 2) {
                 object.setObjectClassification(ObjectClassification.FRIENDLY);
+                friendly.setMissile(object);
                 return;
             }
         }

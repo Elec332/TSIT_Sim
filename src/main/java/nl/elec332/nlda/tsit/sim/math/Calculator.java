@@ -9,8 +9,6 @@ import javax.vecmath.Vector3d;
  */
 public class Calculator {
 
-    public static final double GRAVITY = 9.80665;
-
     public static Vector3d calculatePosition(RadarMeasurement measurement) {
         double height = measurement.getDistance() * Math.sin(toRad(measurement.getElevation()));
         double ground = measurement.getDistance() * Math.cos(toRad(measurement.getElevation()));
