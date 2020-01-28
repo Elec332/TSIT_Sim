@@ -83,25 +83,41 @@ public class FireController {
             return false;
         }
         System.out.println("FIRE@: " + object.getId());
-        int tth = Constants.KILL_RANGE;
+        double tth = object.getDistanceTo(Constants.ZERO_POS)/Constants.PROJECTILE_SPEED;
         Vector3d fut = object.getFuturePosition(tth);
-        if (Calculator.distance(fut, Constants.ZERO_POS) > tth * Constants.PROJECTILE_SPEED) {
-            return false;
+        double dist, bearing, elevation = 0;
+        elevation = fut.z < 0 ? 0 : Math.atan((fut.z + tth * Constants.GRAVITY) / Math.sqrt(fut.x * fut.x + fut.y * fut.y));
+        for (int i = 0; i <500; i++) {
+            tth = Math.sqrt(fut.x * fut.x + fut.y * fut.y) / (Constants.PROJECTILE_SPEED * Math.cos(elevation/2));
+            fut = object.getFuturePosition(tth);
+            bearing = Math.atan(fut.x / fut.y);
+            elevation = fut.z < 0 ? 0 : Math.atan((fut.z + Constants.GRAVITY*tth*tth) / Math.sqrt(fut.x * fut.x + fut.y * fut.y));
+            Vector3d futProj = new Vector3d(Constants.PROJECTILE_SPEED * Math.sin(bearing) * Math.cos(elevation/2)
+                    , Constants.PROJECTILE_SPEED * Math.cos(bearing) * Math.cos(elevation/2)
+                    , Constants.PROJECTILE_SPEED * Math.sin(elevation) - Constants.GRAVITY*tth);
+            futProj.scale(tth);
+            dist = Calculator.distance(futProj, fut);
         }
+        return false;
+        //System.out.println("Distance, tth: "+dist+ ","+tth);
+        //if (Calculator.distance(fut, Constants.ZERO_POS) > tth * Constants.PROJECTILE_SPEED) {
+            //return false;
+        //}
+        /*
         fut.add(new Vector3d(0,0, tth * Constants.GRAVITY));
         System.out.println("Target location in " + tth + "s is " + fut);
-        double bearing = Math.toDegrees(Math.atan(fut.x / fut.y)); //  o / a
+        bearing = Math.toDegrees(Math.atan(fut.x / fut.y)); //  o / a
         if (fut.y < 0) {
             bearing = 180 + bearing;
         }
-        double elevation = fut.z < 0 ? 0 : Math.toDegrees(Math.atan(fut.z / Math.sqrt(fut.x * fut.x + fut.y * fut.y)));
+        elevation = fut.z < 0 ? 0 : Math.toDegrees(Math.atan(fut.z / Math.sqrt(fut.x * fut.x + fut.y * fut.y)));
 
         for (int i = 0; i < Constants.NUMBER_OF_GUNS; i++) {
             if (fire(i, bearing, elevation, object)) {
                 break;
             }
         }
-        return true;
+        return true;*/
     }
 
     private boolean fire(int gun, double bearing, double elevation, TrackedObject target) {
