@@ -1,15 +1,14 @@
 package nl.elec332.nlda.tsit.sim.main;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
 import nl.elec332.nlda.tsit.sim.util.DialogHelper;
+import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
 import nl.elec332.nlda.tsit.sim.util.ObjectType;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  * Created by Elec332 on 28-1-2020
@@ -47,8 +46,9 @@ public class Commander {
         if (editProps.add(object)) {
             new Thread(() -> {
                 JPanel panel = new JPanel(new BorderLayout());
+
                 JPanel type = new JPanel(new FlowLayout());
-                JComboBox<ObjectType> types = new JComboBox<>(new Vector<>(Lists.newArrayList(ObjectType.values())));
+                JComboBox<ObjectType> types = new JComboBox<>(ObjectType.values());
                 types.setSelectedItem(ObjectType.UNKNOWN);
                 if (object.getTypes().size() == 0) {
                     types.setSelectedItem(object.getTypes().get(0));
@@ -58,7 +58,17 @@ public class Commander {
                     object.lockType();
                 });
                 type.add(types);
+                JComboBox<ObjectClassification> classT = new JComboBox<>(ObjectClassification.values());
+                classT.setSelectedItem(object.getObjectClassification());
+                classT.addActionListener(a -> {
+                    ObjectClassification c = (ObjectClassification) classT.getSelectedItem();
+                    if (c != null) {
+                        object.setObjectClassification(c);
+                    }
+                });
+                type.add(classT);
                 panel.add(type, BorderLayout.CENTER);
+
                 JPanel t = new JPanel();
                 JCheckBox perms = new JCheckBox("Permission to fire");
                 perms.addActionListener(a -> {
@@ -66,6 +76,7 @@ public class Commander {
                 });
                 t.add(perms);
                 panel.add(t, BorderLayout.SOUTH);
+
                 DialogHelper.askForInput(null, "Edit properties", panel);
                 editProps.remove(object);
             }).start();
