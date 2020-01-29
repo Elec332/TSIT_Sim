@@ -9,8 +9,10 @@ public class Target {
     public Target(Vector3d pos, TrackedObject target) {
         this.pos = pos;
         this.target = target;
+        this.time = this.target.getCurrentTime();
     }
 
+    private final double time;
     private Vector3d pos;
     private TrackedObject target, missile;
 
@@ -19,6 +21,10 @@ public class Target {
             return missile.getCurrentPosition();
         }
         return pos;
+    }
+
+    public double getFireTime() {
+        return time;
     }
 
     public boolean hasMissile() {

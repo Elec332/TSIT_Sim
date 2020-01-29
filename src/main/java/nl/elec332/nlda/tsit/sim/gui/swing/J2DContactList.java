@@ -31,6 +31,7 @@ public class J2DContactList extends JList<String> {
             info += ("<br />ALT:  " + Constants.TWO_DIGITS_FORMAT.format(object.getCurrentPosition().z) + "m");
             info += ("<br />SPD:  " + Constants.TWO_DIGITS_FORMAT.format(object.getCurrentSpeed().length()) + "m/s");
             info += ("<br />DIST: " + Constants.TWO_DIGITS_FORMAT.format(object.getCurrentPosition().length()) + "m");
+            info += "<br />";
             info += "</html>";
 
             list.addElement(info);

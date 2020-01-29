@@ -41,6 +41,10 @@ public class ContactClassifier {
         lock.unlock();
     }
 
+    public void notifyFriendlyUnsafe(Target target) {
+        friendlies.add(target);
+    }
+
     void updateObject(TrackedObject object) {
         lock.lock();
         Iterator<Target> it = friendlies.iterator();
@@ -76,8 +80,18 @@ public class ContactClassifier {
         if (!object.getObjectClassification().getChangeable()) {
             return;
         }
+        if (object.getObjectClassification() == ObjectClassification.UNKNOWN) {
+            if (object.getTypes().contains(ObjectType.HELI)) {
+                object.setObjectClassification(ObjectClassification.POSSIBLE_FRIENDLY);
+            }
+        }
         if (object.getDistanceTo(Constants.ZERO_POS) < Constants.DEFAULT_ENEMY_RANGE) {
-            object.setObjectClassification(ObjectClassification.HOSTILE);
+            if (object.getTypes().contains(ObjectType.MISSILE) && object.getObjectClassification() == ObjectClassification.UNKNOWN) {
+                object.setObjectClassification(ObjectClassification.HOSTILE);
+            }
+            if (object.getObjectClassification() == ObjectClassification.UNKNOWN) {
+                object.setObjectClassification(ObjectClassification.HOSTILE);
+            }
         }
     }
 

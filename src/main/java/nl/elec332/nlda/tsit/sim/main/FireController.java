@@ -25,7 +25,7 @@ public class FireController {
 
     void updateObject(TrackedObject object) {
 
-        if (object.getObjectClassification() == ObjectClassification.HOSTILE && !targets.contains(object)) {
+        if (object.getObjectClassification().isHostile() && !targets.contains(object)) {
             if (object.getLocations().size() <= 3 && object.isUnknown()) {
                 return;
             }
@@ -46,11 +46,12 @@ public class FireController {
         }
         List<Target> fireds = Lists.newArrayList();
         boolean[] fired = new boolean[]{false};
+        double currentTime = object.getCurrentTime();
         platform.getClassifier().getFriendlies(f -> {
 
             TrackedObject target = f.getTarget();
 
-            if (target != object || fired[0]) {
+            if (target != object || fired[0] || Math.abs(currentTime - target.getCurrentTime()) < 2.1) {
                 return;
             }
             fired[0] = true;
@@ -104,9 +105,11 @@ public class FireController {
         for (int i = 0; i < Constants.NUMBER_OF_GUNS; i++) {
             Target fired = fire(i, bearing, elevation, object);
             if (fired != null) {
+                System.out.println("notfr");
                 if (!concurrent) {
-                    platform.getClassifier().notifyFriendly(fired);
+                    platform.getClassifier().notifyFriendlyUnsafe(fired);
                 }
+                System.out.println("donefire");
                 return fired;
             }
         }

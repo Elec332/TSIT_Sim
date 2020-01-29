@@ -13,7 +13,7 @@ public enum ObjectType {
     HELI(120, 0),
     AIRLINER(257, 120, obj -> obj.getCurrentPosition().z > 2000),
     FIGHTER(600, 100),
-    MISSILE(3850, 200),
+    MISSILE(3850, 201),
     UNKNOWN(0, 0);
 
     @SafeVarargs

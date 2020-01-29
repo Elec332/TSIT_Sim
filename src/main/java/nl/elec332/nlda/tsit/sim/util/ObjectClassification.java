@@ -37,4 +37,9 @@ public enum ObjectClassification {
     public boolean getChangeable() {
         return changeable;
     }
+
+    public boolean isHostile() {
+        return this == HOSTILE || this == POSSIBLE_HOSTILE;
+    }
+
 }

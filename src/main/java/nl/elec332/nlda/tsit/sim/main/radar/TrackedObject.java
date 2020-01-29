@@ -67,6 +67,10 @@ public class TrackedObject {
         return new BoundingBox3d(Arrays.asList(posC.sub(5), posC.add(speedC.add(5))));
     }
 
+    public double getCurrentTime() {
+        return measurements.get(measurements.size() - 1).getTime();
+    }
+
     public Coord3d getCoord() {
         return new Coord3d(lastPosition.x, lastPosition.y, lastPosition.z);
     }
