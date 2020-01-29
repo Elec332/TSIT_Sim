@@ -75,6 +75,9 @@ public class Commander {
                     object.setFireClearance(perms.isSelected());
                 });
                 t.add(perms);
+                JButton fireb = new JButton("Fire!");
+                fireb.addActionListener(a -> platform.getFireController().fireAt(object));
+                t.add(fireb);
                 panel.add(t, BorderLayout.SOUTH);
 
                 DialogHelper.askForInput(null, "Edit properties", panel);

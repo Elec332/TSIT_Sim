@@ -46,13 +46,13 @@ public class FireController {
                 }
             }
         }
-        ArrayList<Target> fireds = new ArrayList<Target>();
+        List<Target> fireds = Lists.newArrayList();
         boolean[] fired = new boolean[]{false};
         platform.getClassifier().getFriendlies(f -> {
 
             TrackedObject target = f.getTarget();
 
-            if (target != object && !fired[0]) {
+            if (target != object || fired[0]) {
                 return;
             }
             fired[0] = true;

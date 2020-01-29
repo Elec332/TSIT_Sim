@@ -26,8 +26,8 @@ public class Gui3DView implements IRadarView {
 
     public Gui3DView(Supplier<Collection<TrackedObject>> objectTracker) {
         this.chart = new SwingChart(Quality.Intermediate);
-        this.height = 100;
-        this.minRange = 5000;
+        this.height = 10000;
+        this.minRange = 25000;
         this.objectTracker = objectTracker;
     }
 
