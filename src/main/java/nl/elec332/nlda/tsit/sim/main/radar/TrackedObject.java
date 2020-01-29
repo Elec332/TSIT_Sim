@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import nl.elec332.nlda.tsit.sim.math.Calculator;
+import nl.elec332.nlda.tsit.sim.util.Constants;
 import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
 import nl.elec332.nlda.tsit.sim.util.ObjectType;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
@@ -148,6 +149,9 @@ public class TrackedObject {
         Vector3d speed = new Vector3d(getCurrentSpeed());
         speed.scale(seconds);
         futurePosition.add(speed);
+        if (objectType == ObjectClassification.FRIENDLY && types.contains(ObjectType.MISSILE)) {
+            futurePosition.z -= seconds*seconds*Constants.GRAVITY;
+        }
         return futurePosition;
     }
 

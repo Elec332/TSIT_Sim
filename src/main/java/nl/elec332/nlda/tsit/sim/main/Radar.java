@@ -25,10 +25,6 @@ public class Radar {
     private final ObjectTracker objectTracker;
     private final Collection<IRadarView> views;
 
-    public void notifyCrashed(TrackedObject object) {
-        objectTracker.notifyCrashed(object);
-    }
-
     public void addView(BiFunction<Supplier<Collection<TrackedObject>>, Commander, IRadarView> viewerFactory) {
         IRadarView view = viewerFactory.apply(this.objectTracker::getFilteredObjects, this.platform.getCommander());
         view.show();

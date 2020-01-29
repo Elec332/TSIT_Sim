@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -20,24 +22,37 @@ public class ContactClassifier {
     public ContactClassifier(Platform platform) {
         this.friendlies = Lists.newArrayList();
         this.platform = platform;
+        this.lock = new ReentrantLock(true);
     }
 
     private final Platform platform;
     private final List<Target> friendlies;
+    private final ReentrantLock lock;
+
+    public void getFriendlies(Consumer<Target> targetConsumer) {
+        lock.lock();
+        this.friendlies.forEach(targetConsumer);
+        lock.unlock();
+    }
 
     public void notifyFriendly(Target target) {
+        lock.lock();
         friendlies.add(target);
+        lock.unlock();
     }
 
     void updateObject(TrackedObject object) {
+        lock.lock();
         Iterator<Target> it = friendlies.iterator();
         while (it.hasNext()) {
             Target friendly = it.next();
             if (friendly.getTarget().getObjectClassification() == ObjectClassification.DOWN) {
                 it.remove();
+                continue;
             }
             if (friendly.hasMissile() && friendly.getMissile().getObjectClassification() == ObjectClassification.DOWN) {
                 it.remove();
+                continue;
             }
             System.out.println("Distance to target: " + friendly.getTarget().getDistanceTo(friendly.getPos()));
             if (!friendly.hasMissile() && object.getDistanceTo(friendly.getPos()) < 2) {
@@ -48,6 +63,7 @@ public class ContactClassifier {
                 return;
             }
         }
+        lock.unlock();
         classify(object);
     }
 
@@ -64,5 +80,6 @@ public class ContactClassifier {
             object.setObjectClassification(ObjectClassification.HOSTILE);
         }
     }
+
 
 }

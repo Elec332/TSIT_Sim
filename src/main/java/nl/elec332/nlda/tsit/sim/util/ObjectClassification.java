@@ -13,6 +13,7 @@ public enum ObjectClassification {
     NEUTRAL("Neutral", Color.WHITE, true),
     POSSIBLE_FRIENDLY("Poss. Friendly", Color.YELLOW, true),
     FRIENDLY("Friendly", Color.GREEN, false),
+    HIT("Hit", Color.BLACK, false),
     DOWN("Down", Color.BLACK, false);
 
     ObjectClassification(String name, Color color, boolean changeable) {

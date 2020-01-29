@@ -9,10 +9,7 @@ import org.jzy3d.maths.BoundingBox3d;
 import org.jzy3d.maths.Coord3d;
 
 import javax.vecmath.Vector3d;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -42,62 +39,46 @@ public class FireController {
             if (clearance) {
                 System.out.println(object);
                 System.out.println(object.getCurrentPosition());
-                if (fireAt(object)) {
+                Target fired = fireAt(object);
+                if (fired != null) {
                     targets.add(object);
+                    platform.getClassifier().notifyFriendly(fired);
                 }
             }
         }
-        checkHits();
-    }
+        ArrayList<Target> fireds = new ArrayList<Target>();
+        boolean[] fired = new boolean[]{false};
+        platform.getClassifier().getFriendlies(f -> {
 
-    private void checkHits() {
-        for (TrackedObject object : targets) {
-            Set<TrackedObject> inRange = targets.stream()
-                    .filter(obj -> obj != object)
-                    .filter(obj -> obj.getObjectClassification() != ObjectClassification.DOWN)
-                    .filter(obj -> obj.getDistanceTo(object.getCurrentPosition()) - 10 <= object.getCurrentSpeed().length() + obj.getCurrentSpeed().length())
-                    .collect(Collectors.toSet());
-            if (!inRange.isEmpty()) {
-                for (TrackedObject target : inRange) {
-                    System.out.println("object " + object.getId() + " and " + target.getId() + " are within 10m of each other ");
-                    if (object.getBound().intersect(target.getBound())) {
-                        System.out.println("And boundingboxes intersect");
-                        Vector3d deltaVobject = object.getCurrentSpeed();
-                        Coord3d deltaCobject = new Coord3d(deltaVobject.x, deltaVobject.y, deltaVobject.z).div(Constants.HIT_SLICING);
+            TrackedObject target = f.getTarget();
 
-                        Vector3d deltaVtarget = target.getCurrentSpeed();
-                        Coord3d deltaCtarget = new Coord3d(deltaVtarget.x, deltaVtarget.y, deltaVtarget.z).div(Constants.HIT_SLICING);
-
-                        BoundingBox3d boundTarget = new BoundingBox3d(Arrays.asList(target.getCoord().sub(5), target.getCoord().add(5)));
-                        BoundingBox3d boundObject = new BoundingBox3d(Arrays.asList(object.getCoord().sub(5), object.getCoord().add(5)));
-                        for (int i = 0; i < 300; i++) {
-                            if (boundTarget.intersect(boundObject)) {
-                                this.platform.getRadar().notifyCrashed(object);
-                                this.platform.getRadar().notifyCrashed(target);
-                                i = 300;
-                                System.out.println("And... it's a hit \\o/ ");
-                            }
-                            boundTarget.shift(deltaCtarget);
-                            boundObject.shift(deltaCobject);
-                        }
-                    }
-                }
+            if (target != object && !fired[0]) {
+                return;
             }
-        }
+            fired[0] = true;
+            if (Calculator.distance(target.getCurrentSpeed(),target.getSpeeds().get(target.getSpeeds().size()-2)) > Constants.FUZZY) {
+                fireds.add(fireAt(target));
+            }
+        });
+
+        fireds.stream().filter(Objects::nonNull).forEach(obj -> platform.getClassifier().notifyFriendly(obj));
+
     }
 
-    public boolean fireAt(TrackedObject object) {
+
+
+    public Target fireAt(TrackedObject object) {
         if (object.getCurrentSpeed().length() < 1) {
-            return false;
+            return null;
         }
         System.out.println("FIRE@: " + object.getId());
         double tth = object.getDistanceTo(Constants.ZERO_POS) / Constants.PROJECTILE_SPEED;
         Vector3d fut = object.getFuturePosition(tth);
-        double dist, bearing, elevation;
-        elevation = fut.z < 0 ? 0 : Math.atan((fut.z + tth * Constants.GRAVITY) / Math.sqrt(fut.x * fut.x + fut.y * fut.y));
-        dist = 500;
-        for (int i = 0; i < 50 && dist > Constants.KILL_RANGE; i++) {
-            tth = Calculator.distance(fut, Constants.ZERO_POS) / (Constants.PROJECTILE_SPEED * Math.cos(elevation/2));
+        double dist = 599, bearing = 0, elevation = 0;
+
+        elevation = fut.z < 0 ? 0 : Math.atan((fut.z + Constants.GRAVITY * tth * tth) / Math.sqrt(fut.x * fut.x + fut.y * fut.y));
+        for (int i = 0; i < 10; i++) {
+            tth = Math.sqrt(fut.x * fut.x + fut.y * fut.y) / (Constants.PROJECTILE_SPEED * Math.cos(elevation));
             fut = object.getFuturePosition(tth);
             bearing = Math.atan(fut.x / fut.y);
             elevation = fut.z < 0 ? 0 : Math.atan((fut.z + Constants.GRAVITY * tth * tth) / Math.sqrt(fut.x * fut.x + fut.y * fut.y));
@@ -109,28 +90,29 @@ public class FireController {
             dist = Calculator.distance(futProj, fut);
         }
 
-        fut.add(new Vector3d(0,0, tth * Constants.GRAVITY));
         System.out.println("Target location in " + tth + "s is " + fut);
-        System.out.println("Distance at impact will be " + dist + "m");
-        bearing = Math.toDegrees(Math.atan(fut.x / fut.y)); //  o / a
+
+        bearing = Math.toDegrees(bearing);
+        elevation = Math.toDegrees(elevation);
+
         if (fut.y < 0) {
             bearing = 180 + bearing;
         }
-        elevation = fut.z < 0 ? 0 : Math.toDegrees(Math.atan(fut.z / Math.sqrt(fut.x * fut.x + fut.y * fut.y)));
-
         for (int i = 0; i < Constants.NUMBER_OF_GUNS; i++) {
-            if (fire(i, bearing, elevation, object)) {
-                break;
+            Target fired = fire(i, bearing, elevation, object);
+            if (fired != null) {
+                return fired;
             }
         }
-        return true;
+        return null;
     }
 
-    private boolean fire(int gun, double bearing, double elevation, TrackedObject target) {
+    private Target fire(int gun, double bearing, double elevation, TrackedObject target) {
         System.out.println("Firing at (bearing, elevation): (" + bearing + ", " + elevation + ")");
         Launcher launcher = platform.getGuns().get(gun);
         launcher.aim(bearing, elevation);
         boolean ret = launcher.fire();
+        Target fired = null;
         if (ret) {
             bearing = Math.toRadians(bearing);
             elevation = Math.toRadians(elevation);
@@ -138,9 +120,9 @@ public class FireController {
                     , Math.cos(bearing) * Math.cos(elevation)
                     , Math.sin(elevation) - Constants.GRAVITY / launcher.getFiringSpeed());
             projLoc.scale(launcher.getFiringSpeed());
-            platform.getClassifier().notifyFriendly(new Target(projLoc, target));
+            fired = new Target(projLoc, target);
         }
-        return ret;
+        return fired;
     }
 
 }
