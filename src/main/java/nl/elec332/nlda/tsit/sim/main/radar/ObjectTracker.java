@@ -6,11 +6,8 @@ import nl.elec332.nlda.tsit.sim.math.Calculator;
 import nl.elec332.nlda.tsit.sim.util.Constants;
 import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
 import nl.elec332.nlda.tsit.sim.util.RadarMeasurement;
-import org.jzy3d.maths.BoundingBox3d;
-import org.jzy3d.maths.Coord3d;
 
 import javax.vecmath.Vector3d;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
@@ -95,8 +92,8 @@ public class ObjectTracker {
                 for (TrackedObject target : inRange) {
                     System.out.println("object " + object.getId() + " and " + target.getId() + " are within 10m of each other ");
                     for (int i = 0; i < 500; i++) {
-                        Vector3d getPrevObj = object.getFuturePosition(-i/500.0);
-                        Vector3d getPrevTarget = target.getFuturePosition(-i/500.0);
+                        Vector3d getPrevObj = object.getFuturePosition(-i / 500.0);
+                        Vector3d getPrevTarget = target.getFuturePosition(-i / 500.0);
                         if (Calculator.distance(getPrevObj, getPrevTarget) < Constants.KILL_RANGE) {
                             notifyHit(object);
                             notifyHit(target);

@@ -150,7 +150,7 @@ public class TrackedObject {
         speed.scale(seconds);
         futurePosition.add(speed);
         if (objectType == ObjectClassification.FRIENDLY && types.contains(ObjectType.MISSILE)) {
-            futurePosition.z -= seconds*seconds*Constants.GRAVITY;
+            futurePosition.z -= seconds * seconds * Constants.GRAVITY;
         }
         return futurePosition;
     }

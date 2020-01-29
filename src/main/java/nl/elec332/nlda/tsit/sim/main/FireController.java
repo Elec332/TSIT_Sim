@@ -5,12 +5,10 @@ import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
 import nl.elec332.nlda.tsit.sim.math.Calculator;
 import nl.elec332.nlda.tsit.sim.util.Constants;
 import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
-import org.jzy3d.maths.BoundingBox3d;
-import org.jzy3d.maths.Coord3d;
 
 import javax.vecmath.Vector3d;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Elec332 on 22-1-2020
@@ -39,7 +37,7 @@ public class FireController {
             if (clearance) {
                 System.out.println(object);
                 System.out.println(object.getCurrentPosition());
-                Target fired = fireAt(object);
+                Target fired = fireAt(object, true);
                 if (fired != null) {
                     targets.add(object);
                     platform.getClassifier().notifyFriendly(fired);
@@ -56,8 +54,8 @@ public class FireController {
                 return;
             }
             fired[0] = true;
-            if (Calculator.distance(target.getCurrentSpeed(),target.getSpeeds().get(target.getSpeeds().size()-2)) > Constants.FUZZY) {
-                fireds.add(fireAt(target));
+            if (Calculator.distance(target.getCurrentSpeed(), target.getSpeeds().get(target.getSpeeds().size() - 2)) > Constants.FUZZY) {
+                fireds.add(fireAt(target, true));
             }
         });
 
@@ -65,9 +63,11 @@ public class FireController {
 
     }
 
+    public void fireAt(TrackedObject object) {
+        fireAt(object, false);
+    }
 
-
-    public Target fireAt(TrackedObject object) {
+    private Target fireAt(TrackedObject object, boolean concurrent) {
         if (object.getCurrentSpeed().length() < 1) {
             return null;
         }
@@ -101,6 +101,9 @@ public class FireController {
         for (int i = 0; i < Constants.NUMBER_OF_GUNS; i++) {
             Target fired = fire(i, bearing, elevation, object);
             if (fired != null) {
+                if (!concurrent) {
+                    platform.getClassifier().notifyFriendly(fired);
+                }
                 return fired;
             }
         }
