@@ -4,11 +4,11 @@ import com.google.common.collect.Lists;
 import nl.elec332.nlda.tsit.sim.main.radar.TrackedObject;
 import nl.elec332.nlda.tsit.sim.math.Calculator;
 import nl.elec332.nlda.tsit.sim.util.Constants;
-import nl.elec332.nlda.tsit.sim.util.ObjectClassification;
 
 import javax.vecmath.Vector3d;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * Created by Elec332 on 22-1-2020
@@ -18,10 +18,13 @@ public class FireController {
     FireController(Platform platform) {
         this.platform = platform;
         this.targets = Lists.newArrayList();
+        this.fireds = Lists.newArrayList();
+
     }
 
     private final Platform platform;
     private final List<TrackedObject> targets;
+    List<Target> fireds;
 
     void updateObject(TrackedObject object) {
 
@@ -44,23 +47,23 @@ public class FireController {
                 }
             }
         }
-        List<Target> fireds = Lists.newArrayList();
-        boolean[] fired = new boolean[]{false};
-        double currentTime = object.getCurrentTime();
+        int s = fireds.size();
         platform.getClassifier().getFriendlies(f -> {
 
             TrackedObject target = f.getTarget();
 
-            if (target != object || fired[0] || Math.abs(currentTime - target.getCurrentTime()) < 2.1) {
+            if (target != object || !fireds.stream().filter(obj -> obj.getTarget() == target && !obj.hasMissile()).collect(Collectors.toSet()).isEmpty()) {
                 return;
             }
-            fired[0] = true;
             if (Calculator.distance(target.getCurrentSpeed(), target.getSpeeds().get(target.getSpeeds().size() - 2)) > Constants.FUZZY) {
-                fireds.add(fireAt(target, true));
+                //fireds.add(fireAt(target, true));
+                return;
             }
-        });
 
-        fireds.stream().filter(Objects::nonNull).forEach(obj -> platform.getClassifier().notifyFriendly(obj));
+        });
+        if (s != fireds.size()) {
+            platform.getClassifier().notifyFriendly(fireds.get(fireds.size()-1));
+        }
 
     }
 

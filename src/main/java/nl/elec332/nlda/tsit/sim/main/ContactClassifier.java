@@ -59,7 +59,7 @@ public class ContactClassifier {
                 continue;
             }
             System.out.println("Distance to target: " + friendly.getTarget().getDistanceTo(friendly.getPos()));
-            if (!friendly.hasMissile() && object.getDistanceTo(friendly.getPos()) < 2) {
+            if (!friendly.hasMissile() && object.getDistanceTo(friendly.getPos()) < Constants.FUZZY) {
                 object.setObjectClassification(ObjectClassification.FRIENDLY);
                 friendly.setMissile(object);
                 object.setObjectType(ObjectType.MISSILE);
@@ -85,7 +85,7 @@ public class ContactClassifier {
                 object.setObjectClassification(ObjectClassification.POSSIBLE_FRIENDLY);
             }
         }
-        if (object.getDistanceTo(Constants.ZERO_POS) < Constants.DEFAULT_ENEMY_RANGE) {
+        if (object.getDistanceTo(Constants.ZERO_POS) < Constants.DEFAULT_ENEMY_RANGE || object.getCurrentSpeed().angle(object.getCurrentPosition()) >3.14) {
             if (object.getTypes().contains(ObjectType.MISSILE) && object.getObjectClassification() == ObjectClassification.UNKNOWN) {
                 object.setObjectClassification(ObjectClassification.HOSTILE);
             }

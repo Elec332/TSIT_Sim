@@ -77,7 +77,7 @@ public class ObjectTracker {
                 .get();
         ret.addMeasurement(measurement);
 
-        //checkHits();
+        checkHits();
         return ret;
     }
 
