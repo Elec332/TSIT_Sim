@@ -91,7 +91,10 @@ public class FireController {
         }
 
         System.out.println("Target location in " + tth + "s is " + fut);
-
+        if (Calculator.distance(fut, Constants.ZERO_POS) > Constants.GUN_RANGE) {
+            System.out.println("Target out of range, not firing yet, distance when hit:" + Calculator.distance(fut, Constants.ZERO_POS));
+            return null;
+        }
         bearing = Math.toDegrees(bearing);
         elevation = Math.toDegrees(elevation);
 

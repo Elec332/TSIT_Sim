@@ -25,4 +25,5 @@ public class Constants {
     public static final NumberFormat TWO_DIGITS_FORMAT = new DecimalFormat("#.##");
 
     public static final double FUZZY = 0.1;
+    public static final int GUN_RANGE = 6 * ONE_KILOMETER;
 }
