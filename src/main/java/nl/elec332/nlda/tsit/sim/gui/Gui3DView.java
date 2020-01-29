@@ -26,7 +26,7 @@ public class Gui3DView implements IRadarView {
 
     public Gui3DView(Supplier<Collection<TrackedObject>> objectTracker) {
         this.chart = new SwingChart(Quality.Intermediate);
-        this.height = 10000;
+        this.height = 1000;
         this.minRange = 25000;
         this.objectTracker = objectTracker;
     }
@@ -66,10 +66,13 @@ public class Gui3DView implements IRadarView {
         drawers.forEach(d -> chart.removeDrawable(d, false));
         drawers.clear();
 
-        height = objectTracker.get().stream().mapToDouble(obj -> obj.getCurrentPosition().z).max().orElse(height);
+        //height = objectTracker.get().stream().mapToDouble(obj -> obj.getCurrentPosition().z).max().orElse(height);
 
 
         for (TrackedObject trackedObject : objectTracker.get()) {
+            if (trackedObject.getCurrentPosition().length() > minRange) {
+                continue;
+            }
             List<Coord3d> controlCoords = trackedObject.getLocations().stream().map(pos -> new Coord3d(pos.x, pos.y, pos.z)).collect(Collectors.toList());
             List<Point> controlPoints = new ArrayList<>();
             java.awt.Color realColor = trackedObject.getColor();

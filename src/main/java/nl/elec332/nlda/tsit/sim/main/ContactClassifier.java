@@ -82,14 +82,13 @@ public class ContactClassifier {
         }
         if (object.getObjectClassification() == ObjectClassification.UNKNOWN) {
             if (object.getTypes().contains(ObjectType.HELI)) {
-                object.setObjectClassification(ObjectClassification.POSSIBLE_FRIENDLY);
+                object.setObjectClassification(ObjectClassification.POSSIBLE_HOSTILE);
             }
         }
-        if (object.getDistanceTo(Constants.ZERO_POS) < Constants.DEFAULT_ENEMY_RANGE || object.getCurrentSpeed().angle(object.getCurrentPosition()) >3.14) {
+        if (object.getDistanceTo(Constants.ZERO_POS) < Constants.DEFAULT_ENEMY_RANGE || object.getCurrentSpeed().angle(object.getCurrentPosition()) > 3.14) {
             if (object.getTypes().contains(ObjectType.MISSILE) && object.getObjectClassification() == ObjectClassification.UNKNOWN) {
                 object.setObjectClassification(ObjectClassification.HOSTILE);
-            }
-            if (object.getObjectClassification() == ObjectClassification.UNKNOWN) {
+            } else if (object.getObjectClassification() == ObjectClassification.UNKNOWN) {
                 object.setObjectClassification(ObjectClassification.HOSTILE);
             }
         }

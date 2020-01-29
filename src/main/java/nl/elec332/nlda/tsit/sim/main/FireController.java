@@ -18,16 +18,14 @@ public class FireController {
     FireController(Platform platform) {
         this.platform = platform;
         this.targets = Lists.newArrayList();
-        this.fireds = Lists.newArrayList();
-
     }
 
     private final Platform platform;
     private final List<TrackedObject> targets;
-    List<Target> fireds;
+
 
     void updateObject(TrackedObject object) {
-
+        List<Target> fireds = Lists.newArrayList();
         if (object.getObjectClassification().isHostile() && !targets.contains(object)) {
             if (object.getLocations().size() <= 3 && object.isUnknown()) {
                 return;
